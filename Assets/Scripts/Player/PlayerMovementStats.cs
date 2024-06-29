@@ -2,17 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovementStats : MonoBehaviour
+[CreateAssetMenu(menuName = "Player Movement")]
+public class PlayerMovementStats : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [Header("Walk")]
+    [Range(1f, 100f)] public float MaxWalkSpeed = 12.5f;
+    [Range(0.25f, 50f)] public float GroundAcceleration = 5f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
