@@ -15,4 +15,11 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _moveVelocity;
     private bool _isFacingRight;
 
+    //collision check vars
+    private RaycastHit2D _groundHit;
+    private RaycastHit2D _headHit;
+    private bool _isGrounded;
+    private bool _bumpedHead;
+
+
 }
