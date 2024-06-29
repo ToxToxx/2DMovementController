@@ -8,8 +8,8 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("References")]
     public PlayerMovementStats MovementStats;
-    [SerializeField] private Collision2D _feetCollision;
-    [SerializeField] private Collision2D _bodyCollision;
+    [SerializeField] private Collider2D _feetCollider;
+    [SerializeField] private Collider2D _bodyCollider;
 
     private Rigidbody2D _playerRigidbody;
 
@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(float acceleration, float deceleration, Vector2 moveInput)
     {
-        if(moveInput != Vector2.zero)
+        if (moveInput != Vector2.zero)
         {
             TurnCheck(moveInput);
 
@@ -48,7 +48,8 @@ public class PlayerMovement : MonoBehaviour
 
             _moveVelocity = Vector2.Lerp(_moveVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
             _playerRigidbody.velocity = new Vector2(_moveVelocity.x, _playerRigidbody.velocity.y);
-        } else if (moveInput == Vector2.zero)
+        }
+        else if (moveInput == Vector2.zero)
         {
             _moveVelocity = Vector2.Lerp(_moveVelocity, Vector2.zero, deceleration * Time.fixedDeltaTime);
             _playerRigidbody.velocity = new Vector2(_moveVelocity.x, _playerRigidbody.velocity.y);
@@ -61,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Turn(false);
         }
-        else if(!_isFacingRight && moveInput.x > 0)
+        else if (!_isFacingRight && moveInput.x > 0)
         {
             Turn(true);
         }
@@ -69,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Turn(bool turnRight)
     {
-        if(turnRight)
+        if (turnRight)
         {
             _isFacingRight = true;
             transform.Rotate(0f, 180f, 0f);
@@ -80,5 +81,27 @@ public class PlayerMovement : MonoBehaviour
             transform.Rotate(0f, -180f, 0f);
         }
     }
+    #endregion
+
+    #region Collision Checks
+
+    private void IsGrounded()
+    {
+        Vector2 boxCastOrigin = new Vector2(_feetCollider.bounds.center.x, _feetCollider.bounds.min.y);
+        Vector2 boxCastSize = new Vector2(_feetCollider.bounds.size.x, MovementStats.GroundDetectionRayLength);
+
+        _groundHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.down, MovementStats.GroundDetectionRayLength, MovementStats.GroundLayer);
+        if (_groundHit.collider != null)
+        {
+            _isGrounded = true;
+        }
+        else _isGrounded = false;
+    }
+
+    private void CollisionChecks()
+    {
+        IsGrounded();
+    }
+
     #endregion
 }
