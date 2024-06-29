@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [Header("References")]
+    public PlayerMovementStats MovementStats;
+    [SerializeField] private Collision2D _feetCollision;
+    [SerializeField] private Collision2D _bodyCollision;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    private Rigidbody2D _playerRigidbody;
+
+    //movementvars
+    private Vector2 _moveVelocity;
+    private bool _isFacingRight;
+
 }
