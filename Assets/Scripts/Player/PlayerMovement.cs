@@ -30,6 +30,19 @@ public class PlayerMovement : MonoBehaviour
         _playerRigidbody = GetComponent<Rigidbody2D>();
     }
 
+    private void FixedUpdate()
+    {
+        CollisionChecks();
+        if (_isGrounded)
+        {
+            Move(MovementStats.GroundAcceleration, MovementStats.GroundDeceleration, InputManager.Movement);
+
+        } else
+        {
+            Move(MovementStats.AirAcceleration, MovementStats.AirDeceleration, InputManager.Movement);
+        }
+    }
+
     #region Movement
 
     private void Move(float acceleration, float deceleration, Vector2 moveInput)
@@ -96,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
             _isGrounded = true;
         }
         else _isGrounded = false;
+
     }
 
     private void CollisionChecks()

@@ -296,6 +296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 337076930}
   - component: {fileID: 337076931}
+  - component: {fileID: 337076932}
   m_Layer: 0
   m_Name: INPUT
   m_TagString: Untagged
@@ -348,6 +349,18 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &337076932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337076929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd192bb040da3824285975ad6adefce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -787,7 +800,7 @@ Transform:
   m_GameObject: {fileID: 1023734411}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.698682, y: -5.84, z: 0}
+  m_LocalPosition: {x: -10.698682, y: -6.06, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -834,7 +847,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4d2e91c8454814438660dad1f5f24d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementStats: {fileID: 0}
+  MovementStats: {fileID: 11400000, guid: 7f90d67d1099a2c4dbe7fe7f7d19def3, type: 2}
+  _feetCollider: {fileID: 1896766344}
+  _bodyCollider: {fileID: 1500121104}
 --- !u!1 &1500121102
 GameObject:
   m_ObjectHideFlags: 0
