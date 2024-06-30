@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
 
     //jump buffer vars
     private float _jumpBufferTimer;
-    private float _jumpReleasedDuringBuffer;
+    private bool _jumpReleasedDuringBuffer;
 
     //coyote time vars
     private float _coyoteTimer;
@@ -128,7 +128,30 @@ public class PlayerMovement : MonoBehaviour
     #region Jump
     private void JumpChecks()
     {
-        
+        if (InputManager.JumpWasPressed)
+        {
+            _jumpBufferTimer = MovementStats.JumpBufferTime;
+            _jumpReleasedDuringBuffer = false;
+        }
+
+        if(InputManager.JumpWasReleased)
+        {
+            if(_jumpBufferTimer > 0)
+            {
+                _jumpReleasedDuringBuffer = true;
+            }
+
+            if(_isJumping && VerticalVelocity > 0f)
+            {
+                if(_isPastApexThreshold)
+                {
+                    _isPastApexThreshold = false;
+                    _isFastFalling = true;
+                    _fastFallTime = MovementStats.TimeForUpwardsCancel;
+                    VerticalVelocity = 0f;
+                }
+            }
+        }
     }
 
     private void Jump()
