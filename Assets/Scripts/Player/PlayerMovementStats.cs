@@ -20,4 +20,12 @@ public class PlayerMovementStats : ScriptableObject
     public float GroundDetectionRayLength = 0.02f;
     public float HeadDetectionRayLength = 0.02f;
     [Range(0f, 1f)] public float HeadWidth = 0.75f;
+
+    [Header("Jump")]
+    public float JumpHeight = 6.5f;
+    [Range(1f, 1.1f)] public float JumpHeightCompensationFactor = 1.054f;
+    public float TimeTillJumpApex = 0.35f;
+    [Range(0.01f, 5f)] public float GravityReleaseMultiplier = 2f;
+    public float MaxFallSpeed = 26f;
+    [Range(1, 5)] public int NumberOfJumpsAllowed = 2;
 }
