@@ -13,17 +13,17 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D _playerRigidbody;
 
-    //movementvars
+    // movement variables
     private Vector2 _moveVelocity;
     private bool _isFacingRight;
 
-    //collision check vars
+    //collision check variables
     private RaycastHit2D _groundHit;
     private RaycastHit2D _headHit;
     private bool _isGrounded;
     private bool _bumpedHead;
 
-    //jump vars
+    //jump variables
     public float VerticalVelocity { get; private set; }
     private bool _isJumping;
     private bool _isFastFalling;
@@ -32,8 +32,17 @@ public class PlayerMovement : MonoBehaviour
     private float _fastFallReleaseSpeed;
     private int _numberOfJumpsUsed;
 
-    //apex vars
+    //apex variables
+    private float _apexPoint;
+    private float _timePastApexThreshold;
+    private bool _isPastApexThreshold;
 
+    //jump buffer vars
+    private float _jumpBufferTimer;
+    private float _jumpReleasedDuringBuffer;
+
+    //coyote time vars
+    private float _coyoteTimer;
 
     private void Awake()
     {
@@ -42,9 +51,17 @@ public class PlayerMovement : MonoBehaviour
         _playerRigidbody = GetComponent<Rigidbody2D>();
     }
 
+    private void Update()
+    {
+        CountTimers();
+        JumpChecks();
+    }
+
     private void FixedUpdate()
     {
         CollisionChecks();
+        Jump();
+
         if (_isGrounded)
         {
             Move(MovementStats.GroundAcceleration, MovementStats.GroundDeceleration, InputManager.Movement);
@@ -108,6 +125,18 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
+    #region Jump
+    private void JumpChecks()
+    {
+        
+    }
+
+    private void Jump()
+    {
+
+    }
+    #endregion
+
     #region Collision Checks
 
     private void IsGrounded()
@@ -127,6 +156,22 @@ public class PlayerMovement : MonoBehaviour
     private void CollisionChecks()
     {
         IsGrounded();
+    }
+
+    #endregion
+
+    #region Timers
+
+    private void CountTimers()
+    {
+        _jumpBufferTimer -= Time.deltaTime;
+
+        if (!_isGrounded)
+        {
+            _coyoteTimer -= Time.deltaTime;
+        }
+        else _coyoteTimer = MovementStats.JumpCoyoteTime;
+
     }
 
     #endregion
