@@ -150,10 +150,64 @@ public class PlayerMovement : MonoBehaviour
                     _fastFallTime = MovementStats.TimeForUpwardsCancel;
                     VerticalVelocity = 0f;
                 }
+                else
+                {
+                    _isFastFalling = true;
+                    _fastFallReleaseSpeed = VerticalVelocity;
+                }
             }
+        }
+
+        //Initiating Jump
+        if (_jumpBufferTimer > 0f && !_isJumping && (_isGrounded || _coyoteTimer > 0f))
+        {
+            InitiateJump(1);
+
+            if (_jumpReleasedDuringBuffer)
+            {
+                _isFastFalling = true;
+                _fastFallReleaseSpeed = VerticalVelocity;
+            }
+        }
+
+        //Double jump logic
+        else if (_jumpBufferTimer > 0f && _isJumping && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed)
+        {
+            _isFastFalling = false;
+            InitiateJump(1);
+        }
+
+        //air jump after coyote time lapsed logic
+        else if (_jumpBufferTimer > 0f && _isFalling && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed)
+        {
+            InitiateJump(2); //because we are falling and it's air jump
+            _isFastFalling = false;
+        }
+
+        //landed logic
+        if((_isJumping || _isFalling) && _isGrounded && VerticalVelocity <= 0f)
+        {
+            _isJumping = false;
+            _isFalling = false;
+            _isFastFalling = false;
+            _isPastApexThreshold = false;
+            _fastFallTime = 0f;         
+            _numberOfJumpsUsed = 0;
+            VerticalVelocity = Physics2D.gravity.y;
         }
     }
 
+    private void InitiateJump(int numberOfJumpsUsed)
+    {
+        if (!_isJumping)
+        {
+            _isJumping = true;
+        }
+
+        _jumpBufferTimer = 0f;
+        _numberOfJumpsUsed += numberOfJumpsUsed;
+        VerticalVelocity = MovementStats.InitialJumpVelocity;
+    }
     private void Jump()
     {
 
