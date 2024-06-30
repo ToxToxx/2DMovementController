@@ -178,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //air jump after coyote time lapsed logic
-        else if (_jumpBufferTimer > 0f && _isFalling && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed)
+        else if (_jumpBufferTimer > 0f && _isFalling && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed - 1)//fixed bugs of uneccesary double jump in air
         {
             InitiateJump(2); //because we are falling and it's air jump
             _isFastFalling = false;
@@ -287,7 +287,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //normal gravity while falling
-        if(_isGrounded && !_isJumping)
+        if(!_isGrounded && !_isJumping)
         {
             if (!_isFalling)
             {
