@@ -210,7 +210,75 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Jump()
     {
+        //apply gravity
+        if (_isJumping)
+        {   
+            //check head bump
+            if(_bumpedHead)
+            {
+                _isFastFalling = true;
 
+            }
+
+            //gravity of ascending
+            if(VerticalVelocity >= 0f)
+            {
+                //apex controls
+                _apexPoint = Mathf.InverseLerp(MovementStats.InitialJumpVelocity, 0f, VerticalVelocity);
+
+                if(_apexPoint > MovementStats.ApexThreshhold)
+                {
+                    if (!_isPastApexThreshold)
+                    {
+                        _isPastApexThreshold = true;
+                        _timePastApexThreshold = 0f;
+                    }
+                    if (_isPastApexThreshold)
+                    {
+                        _timePastApexThreshold += Time.deltaTime;
+                        if(_timePastApexThreshold < MovementStats.ApexHangTime)
+                        {
+                            VerticalVelocity = 0f;
+                        }
+                        else
+                        {
+                            VerticalVelocity = -0.01f;
+                        }
+                    }
+                }
+                //gravity of ascending not past apex threshold
+                else
+                {
+                    VerticalVelocity += MovementStats.Gravity * Time.fixedDeltaTime;
+                    if (_isPastApexThreshold)
+                    {
+                        _isPastApexThreshold = false;
+                    }
+                }
+            }
+            //gravity of descending
+            else if (!_isFastFalling)
+            {
+                VerticalVelocity += MovementStats.Gravity * MovementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
+            }
+            else if(VerticalVelocity< 0f)
+            {
+                if(!_isFalling)
+                {
+                    _isFalling = true;
+                }
+            }
+        }
+
+
+
+
+
+        //jump cut
+
+        //normal gravity while falling
+
+        //clamp fall speed
     }
     #endregion
 
