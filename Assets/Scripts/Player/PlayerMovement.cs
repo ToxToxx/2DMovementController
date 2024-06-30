@@ -329,10 +329,15 @@ public class PlayerMovement : MonoBehaviour
         {
             _bumpedHead = true;
         }
+        else
+        {
+            _bumpedHead = false;
+        }
     }
     private void CollisionChecks()
     {
         IsGrounded();
+        BumpedHead();
     }
 
     #endregion
