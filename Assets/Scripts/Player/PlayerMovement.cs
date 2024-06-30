@@ -246,6 +246,7 @@ public class PlayerMovement : MonoBehaviour
                         }
                     }
                 }
+
                 //gravity of ascending not past apex threshold
                 else
                 {
@@ -256,6 +257,7 @@ public class PlayerMovement : MonoBehaviour
                     }
                 }
             }
+
             //gravity of descending
             else if (!_isFastFalling)
             {
@@ -270,15 +272,34 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-
-
-
-
         //jump cut
+        if (_isFastFalling)
+        {
+            if(_fastFallTime >= MovementStats.TimeForUpwardsCancel)
+            {
+                VerticalVelocity += MovementStats.Gravity * MovementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
+            } 
+            else if (_fastFallTime < MovementStats.TimeForUpwardsCancel)
+            {
+                VerticalVelocity = Mathf.Lerp(_fastFallReleaseSpeed, 0f, (_fastFallTime / MovementStats.TimeForUpwardsCancel));
+            }
+            _fastFallTime += Time.fixedDeltaTime;
+        }
 
         //normal gravity while falling
+        if(_isGrounded && !_isJumping)
+        {
+            if (!_isFalling)
+            {
+                _isFalling = true;
+            }
+            VerticalVelocity += MovementStats.Gravity * Time.fixedDeltaTime;
+        }
 
         //clamp fall speed
+        VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
+
+        _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, VerticalVelocity);
     }
     #endregion
 
@@ -298,6 +319,17 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    private void BumpedHead()
+    {
+        Vector2 boxCastOrigin = new Vector2(_feetCollider.bounds.center.x, _bodyCollider.bounds.max.y);
+        Vector2 boxCastSize = new Vector2(_feetCollider.bounds.size.x * MovementStats.HeadWidth, MovementStats.HeadDetectionRayLength);
+
+        _headHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.up, MovementStats.HeadDetectionRayLength, MovementStats.GroundLayer);
+        if(_headHit.collider != null)
+        {
+            _bumpedHead = true;
+        }
+    }
     private void CollisionChecks()
     {
         IsGrounded();
