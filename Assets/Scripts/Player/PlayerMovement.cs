@@ -23,6 +23,18 @@ public class PlayerMovement : MonoBehaviour
     private bool _isGrounded;
     private bool _bumpedHead;
 
+    //jump vars
+    public float VerticalVelocity { get; private set; }
+    private bool _isJumping;
+    private bool _isFastFalling;
+    private bool _isFalling;
+    private float _fastFallTime;
+    private float _fastFallReleaseSpeed;
+    private int _numberOfJumpsUsed;
+
+    //apex vars
+
+
     private void Awake()
     {
         _isFacingRight = true;
