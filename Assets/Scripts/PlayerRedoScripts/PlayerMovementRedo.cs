@@ -16,6 +16,9 @@ public class PlayerMovementRedo : MonoBehaviour
     private AirMovement _airMovement;
     private JumpHandler _jumpHandler;
 
+    private bool _isFacingRight = true;
+    public float VerticalVelocity;
+
     private void Awake()
     {
         _playerRigidbody = GetComponent<Rigidbody2D>();
@@ -45,5 +48,31 @@ public class PlayerMovementRedo : MonoBehaviour
         }
 
         _jumpHandler.ApplyJump();
+    }
+
+    public void TurnCheck(Vector2 moveInput)
+    {
+        if (_isFacingRight && moveInput.x < 0)
+        {
+            Turn(false);
+        }
+        else if (!_isFacingRight && moveInput.x > 0)
+        {
+            Turn(true);
+        }
+    }
+
+    private void Turn(bool turnRight)
+    {
+        if (turnRight)
+        {
+            _isFacingRight = true;
+            transform.Rotate(0f, 180f, 0f);
+        }
+        else
+        {
+            _isFacingRight = false;
+            transform.Rotate(0f, -180f, 0f);
+        }
     }
 }
