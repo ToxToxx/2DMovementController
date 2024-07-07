@@ -5,22 +5,25 @@ using UnityEngine;
 public class JumpHandler
 {
 
-    private PlayerMovementRedo _player;
+    private PlayerMovementRedo _playerMovementRedo;
     private Rigidbody2D _playerRigidbody;
     private PlayerMovementStats _movementStats;
     private Collider2D _feetCollider;
     private Collider2D _bodyCollider;
 
-    private float _jumpBufferTimer;
     private bool _jumpReleasedDuringBuffer;
     private bool _isJumping;
     private bool _isFalling;
     private bool _isFastFalling;
     private bool _isGrounded;
     private bool _bumpedHead;
+
+    private float _jumpBufferTimer;
     private float _fastFallTime;
     private float _fastFallReleaseSpeed;
+
     private int _numberOfJumpsUsed;
+
     private float _apexPoint;
     private float _timePastApexThreshold;
     private bool _isPastApexThreshold;
@@ -30,7 +33,7 @@ public class JumpHandler
 
     public JumpHandler(PlayerMovementRedo player, Rigidbody2D playerRigidbody, PlayerMovementStats movementStats, Collider2D feetCollider, Collider2D bodyCollider)
     {
-        _player = player;
+        _playerMovementRedo = player;
         _playerRigidbody = playerRigidbody;
         _movementStats = movementStats;
         _feetCollider = feetCollider;
@@ -66,19 +69,19 @@ public class JumpHandler
                 _jumpReleasedDuringBuffer = true;
             }
 
-            if (_isJumping && _player.VerticalVelocity > 0f)
+            if (_isJumping && _playerMovementRedo.VerticalVelocity > 0f)
             {
                 if (_isPastApexThreshold)
                 {
                     _isPastApexThreshold = false;
                     _isFastFalling = true;
                     _fastFallTime = _movementStats.TimeForUpwardsCancel;
-                    _player.VerticalVelocity = 0f;
+                    _playerMovementRedo.VerticalVelocity = 0f;
                 }
                 else
                 {
                     _isFastFalling = true;
-                    _fastFallReleaseSpeed = _player.VerticalVelocity;
+                    _fastFallReleaseSpeed = _playerMovementRedo.VerticalVelocity;
                 }
             }
         }
@@ -90,7 +93,7 @@ public class JumpHandler
             if (_jumpReleasedDuringBuffer)
             {
                 _isFastFalling = true;
-                _fastFallReleaseSpeed = _player.VerticalVelocity;
+                _fastFallReleaseSpeed = _playerMovementRedo.VerticalVelocity;
             }
         }
         else if (_jumpBufferTimer > 0f && _isJumping && _numberOfJumpsUsed < _movementStats.NumberOfJumpsAllowed)
@@ -104,7 +107,7 @@ public class JumpHandler
             _isFastFalling = false;
         }
 
-        if ((_isJumping || _isFalling) && _isGrounded && _player.VerticalVelocity <= 0f)
+        if ((_isJumping || _isFalling) && _isGrounded && _playerMovementRedo.VerticalVelocity <= 0f)
         {
             _isJumping = false;
             _isFalling = false;
@@ -112,7 +115,7 @@ public class JumpHandler
             _isPastApexThreshold = false;
             _fastFallTime = 0f;
             _numberOfJumpsUsed = 0;
-            _player.VerticalVelocity = Physics2D.gravity.y;
+            _playerMovementRedo.VerticalVelocity = Physics2D.gravity.y;
         }
     }
 
@@ -125,9 +128,9 @@ public class JumpHandler
                 _isFastFalling = true;
             }
 
-            if (_player.VerticalVelocity >= 0f)
+            if (_playerMovementRedo.VerticalVelocity >= 0f)
             {
-                _apexPoint = Mathf.InverseLerp(_movementStats.InitialJumpVelocity, 0f, _player.VerticalVelocity);
+                _apexPoint = Mathf.InverseLerp(_movementStats.InitialJumpVelocity, 0f, _playerMovementRedo.VerticalVelocity);
 
                 if (_apexPoint > _movementStats.ApexThreshhold)
                 {
@@ -141,17 +144,17 @@ public class JumpHandler
                         _timePastApexThreshold += Time.deltaTime;
                         if (_timePastApexThreshold < _movementStats.ApexHangTime)
                         {
-                            _player.VerticalVelocity = 0f;
+                            _playerMovementRedo.VerticalVelocity = 0f;
                         }
                         else
                         {
-                            _player.VerticalVelocity = -0.01f;
+                            _playerMovementRedo.VerticalVelocity = -0.01f;
                         }
                     }
                 }
                 else
                 {
-                    _player.VerticalVelocity += _movementStats.Gravity * Time.fixedDeltaTime;
+                    _playerMovementRedo.VerticalVelocity += _movementStats.Gravity * Time.fixedDeltaTime;
                     if (_isPastApexThreshold)
                     {
                         _isPastApexThreshold = false;
@@ -160,9 +163,9 @@ public class JumpHandler
             }
             else if (!_isFastFalling)
             {
-                _player.VerticalVelocity += _movementStats.Gravity * _movementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
+                _playerMovementRedo.VerticalVelocity += _movementStats.Gravity * _movementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
             }
-            else if (_player.VerticalVelocity < 0f)
+            else if (_playerMovementRedo.VerticalVelocity < 0f)
             {
                 if (!_isFalling)
                 {
@@ -175,11 +178,11 @@ public class JumpHandler
         {
             if (_fastFallTime >= _movementStats.TimeForUpwardsCancel)
             {
-                _player.VerticalVelocity += _movementStats.Gravity * _movementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
+                _playerMovementRedo.VerticalVelocity += _movementStats.Gravity * _movementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
             }
             else if (_fastFallTime < _movementStats.TimeForUpwardsCancel)
             {
-                _player.VerticalVelocity = Mathf.Lerp(_fastFallReleaseSpeed, 0f, (_fastFallTime / _movementStats.TimeForUpwardsCancel));
+                _playerMovementRedo.VerticalVelocity = Mathf.Lerp(_fastFallReleaseSpeed, 0f, (_fastFallTime / _movementStats.TimeForUpwardsCancel));
             }
             _fastFallTime += Time.fixedDeltaTime;
         }
@@ -190,12 +193,12 @@ public class JumpHandler
             {
                 _isFalling = true;
             }
-            _player.VerticalVelocity += _movementStats.Gravity * Time.fixedDeltaTime;
+            _playerMovementRedo.VerticalVelocity += _movementStats.Gravity * Time.fixedDeltaTime;
         }
 
-        _player.VerticalVelocity = Mathf.Clamp(_player.VerticalVelocity, -_movementStats.MaxFallSpeed, 50f);
+        _playerMovementRedo.VerticalVelocity = Mathf.Clamp(_playerMovementRedo.VerticalVelocity, -_movementStats.MaxFallSpeed, 50f);
 
-        _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, _player.VerticalVelocity);
+        _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, _playerMovementRedo.VerticalVelocity);
     }
 
     private void InitiateJump(int numberOfJumpsUsed)
@@ -207,7 +210,7 @@ public class JumpHandler
 
         _jumpBufferTimer = 0f;
         _numberOfJumpsUsed += numberOfJumpsUsed;
-        _player.VerticalVelocity = _movementStats.InitialJumpVelocity;
+        _playerMovementRedo.VerticalVelocity = _movementStats.InitialJumpVelocity;
     }
 
     public void CollisionChecks()
