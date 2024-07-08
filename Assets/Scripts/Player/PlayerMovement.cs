@@ -205,6 +205,15 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Jump
+
+    private void ResetJumpValues()
+    {
+        _isJumping = false;
+        _isFalling = false;
+        _isFastFalling = false;
+        _fastFallTime = 0f;
+        _isPastApexThreshold = false;
+    }
     private void JumpChecks()
     {
         if (InputManager.JumpWasPressed)
@@ -403,6 +412,28 @@ public class PlayerMovement : MonoBehaviour
 
         }
     }
+
+    #endregion
+
+    #region Wall Jump
+
+    private void ResetWallJumpValues()
+    {
+        _isWallSlideFalling = false;
+        _useWallJumpMoveStats = false;
+        _isWallJumping = false;
+        _isWallJumpFastFalling = false;
+        _isWallJUmpFalling = false;
+        _isPastWallJumpApexThreshold = false;
+
+        _wallJumpFastFallReleaseSpeed = 0f;
+        _wallJumpTime = 0f;
+    }
+
+    #endregion
+
+
+    #region Dash
 
     #endregion
 
