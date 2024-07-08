@@ -93,6 +93,7 @@ public class PlayerMovement : MonoBehaviour
         LandCheck();
         WallSlideCheck();
         WallJumpCheck();
+        DashCheck();
     }
 
     private void FixedUpdate()
@@ -102,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
         Fall();
         WallSlide();
         WallJump();
+        Dash();
 
         if (_isGrounded)
         {
@@ -641,9 +643,64 @@ public class PlayerMovement : MonoBehaviour
 
     #endregion
 
-
     #region Dash
 
+    private void DashCheck()
+    {
+        if (InputManager.DashWasPressed)
+        {
+            //ground dash
+            if(_isGrounded && _dashOnGroundTimer < 0 && !_isDashing)
+            {
+                InitiateDash();
+            }
+
+            //air dash
+            else if (!_isGrounded &&  !_isDashing && _numberOfDashesUsed < MovementStats.NumberOfDashes)
+            {
+                _isAirDashing = true;
+                InitiateDash();
+
+                //you left a wallslide but dashed within the wall jump post buffer timer
+                if(_wallJumpPostBufferTimer > 0f)
+                {
+                    _numberOfJumpsUsed--;
+                    if(_numberOfJumpsUsed < 0f)
+                    {
+                        _numberOfJumpsUsed = 0;
+                    }
+                }
+            }
+        }
+    }
+    
+    private void InitiateDash()
+    {
+        _dashDirection = InputManager.Movement;
+
+        Vector2 closestDirection = Vector2.zero;
+        float minDistance = Vector2.Distance(_dashDirection, MovementStats.DashDirections[0]);
+
+        for (int i = 0; i < MovementStats.DashDirections.Length; i++)
+        {
+            //skip if we hit it bang on
+            if (_dashDirection == MovementStats.DashDirections[i])
+            {
+                closestDirection = _dashDirection;
+                break;
+            }
+
+            float distance = Vector2.Distance(_dashDirection, MovementStats.DashDirections[i]);
+
+            //if diagonal direction
+            bool isDiagonal = (Mathf.Abs(MovementStats.DashDirections[i].x) == 1 && Mathf.Abs(MovementStats.DashDirections[i].y) == 1);
+
+        }
+    }
+    private void Dash()
+    {
+
+    }
     private void ResetDashValues()
     {
         _isDashFastFalling = false;

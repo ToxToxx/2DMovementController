@@ -12,10 +12,12 @@ public class InputManager : MonoBehaviour
     public static bool JumpIsHeld;
     public static bool JumpWasReleased;
     public static bool RunIsHeld;
+    public static bool DashWasPressed;
 
     private InputAction _moveAction;
     private InputAction _jumpAction;
     private InputAction _runAction;
+    private InputAction _dashAction;
 
     private void Awake()
     {
@@ -24,6 +26,8 @@ public class InputManager : MonoBehaviour
         _moveAction = PlayerInput.actions["Move"];
         _jumpAction = PlayerInput.actions["Jump"];
         _runAction = PlayerInput.actions["Run"];
+
+        _dashAction = PlayerInput.actions["Dash"];
     }
 
     private void Update()
