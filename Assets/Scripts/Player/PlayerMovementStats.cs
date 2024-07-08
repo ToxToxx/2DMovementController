@@ -87,24 +87,40 @@ public class PlayerMovementStats : ScriptableObject
         new Vector2 (1, -1).normalized, //Bottom-Right
     };
 
+    //Jump
     public float Gravity { get; private set; }
     public float InitialJumpVelocity { get; private set; }
     public float AdjustedJumpHeight { get; private set; }
 
+    //Wall Jump
+     public float WallJumpGravity { get; private set; }
+    public float InitialWallJumpVelocity { get; private set; }
+    public float AdjustedWallJumpHeight { get; private set; }
+
     private void OnValidate()
     {
-        CalculateValues();
+        CalculateJumpValues();
+        CalculateWallJumpValues();
     }
 
     private void OnEnable()
     {
-        CalculateValues();
+        CalculateJumpValues();
+        CalculateWallJumpValues();
     }
 
-    private void CalculateValues()
+    private void CalculateJumpValues()
     {
         AdjustedJumpHeight = JumpHeight * JumpHeightCompensationFactor;
         Gravity = -(2f * AdjustedJumpHeight) / Mathf.Pow(TimeTillJumpApex, 2f);
-        InitialJumpVelocity = Mathf.Abs(Gravity) * TimeTillJumpApex;
+        InitialJumpVelocity = Mathf.Abs(Gravity) * TimeTillJumpApex;     
     }
+
+    private void CalculateWallJumpValues()
+    {
+        AdjustedWallJumpHeight = WallJumpDirection.y * JumpHeightCompensationFactor;
+        WallJumpGravity = -(2f * AdjustedWallJumpHeight) / Mathf.Pow(TimeTillJumpApex, 2f);
+        InitialWallJumpVelocity = Mathf.Abs(WallJumpGravity) * TimeTillJumpApex;
+    }
+
 }
