@@ -1555,48 +1555,48 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MovementStats: {fileID: 11400000, guid: 7f90d67d1099a2c4dbe7fe7f7d19def3, type: 2}
-  _feetCollider: {fileID: 1896766344}
-  _bodyCollider: {fileID: 1500121104}
+  FeetCollider: {fileID: 1896766344}
+  BodyCollider: {fileID: 1500121104}
   HorizontalVelocity: 0
-  _isFacingRight: 0
-  _isGrounded: 0
-  _bumpedHead: 0
-  _isTouchingWall: 0
+  IsFacingRight: 1
+  IsGrounded: 0
+  BumpedHead: 0
+  IsTouchingWall: 0
   VerticalVelocity: 0
-  _isJumping: 0
-  _isFastFalling: 0
-  _isFalling: 0
-  _fastFallTime: 0
-  _fastFallReleaseSpeed: 0
-  _numberOfJumpsUsed: 0
-  _apexPoint: 0
-  _timePastApexThreshold: 0
-  _isPastApexThreshold: 0
-  _jumpBufferTimer: 0
-  _jumpReleasedDuringBuffer: 0
-  _coyoteTimer: 0
-  _isWallSliding: 0
-  _isWallSlideFalling: 0
-  _useWallJumpMoveStats: 0
-  _isWallJumping: 0
-  _wallJumpTime: 0
-  _isWallJumpFastFalling: 0
-  _isWallJumpFalling: 0
-  _wallJUmpFastFallTime: 0
-  _wallJumpFastFallReleaseSpeed: 0
-  _wallJumpPostBufferTimer: 0
-  _wallJumpApexPoint: 0
-  _timePastWallJumpApexThreshold: 0
-  _isPastWallJumpApexThreshold: 0
-  _isDashing: 0
-  _isAirDashing: 0
-  _dashTimer: 0
-  _dashOnGroundTimer: 0
-  _numberOfDashesUsed: 0
-  _dashDirection: {x: 0, y: 0}
-  _isDashFastFalling: 0
-  _dashFastFallTime: 0
-  _dashFastFallReleaseSpeed: 0
+  IsJumping: 0
+  IsFastFalling: 0
+  IsFalling: 0
+  FastFallTime: 0
+  FastFallReleaseSpeed: 0
+  NumberOfJumpsUsed: 0
+  ApexPoint: 0
+  TimePastApexThreshold: 0
+  IsPastApexThreshold: 0
+  JumpBufferTimer: 0
+  JumpReleasedDuringBufferTimer: 0
+  CoyoteTimer: 0
+  IsWallSliding: 0
+  IsWallSlideFalling: 0
+  UseWallJumpMoveStats: 0
+  IsWallJumping: 0
+  WallJumpTime: 0
+  IsWallJumpFastFalling: 0
+  IsWallJumpFalling: 0
+  WallJUmpFastFallTime: 0
+  WallJumpFastFallReleaseSpeed: 0
+  WallJumpPostBufferTimer: 0
+  WallJumpApexPoint: 0
+  TimePastWallJumpApexThreshold: 0
+  IsPastWallJumpApexThreshold: 0
+  IsDashing: 0
+  IsAirDashing: 0
+  DashTimer: 0
+  DashOnGroundTimer: 0
+  NumberOfDashesUsed: 0
+  DashDirection: {x: 0, y: 0}
+  IsDashFastFalling: 0
+  DashFastFallTime: 0
+  DashFastFallReleaseSpeed: 0
 --- !u!1 &1204262574
 GameObject:
   m_ObjectHideFlags: 0
