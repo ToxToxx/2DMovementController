@@ -1,22 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlayerMovementRefactoring
 {
-    public class WallSlideController : MonoBehaviour
+    public class WallSlideController
     {
         private PlayerMovement _playerMovement;
-        private Rigidbody2D _playerRigidbody;
-        private PlayerMovementStats _movementStats;
-        private JumpHandler _jumpHandler;
 
-        public WallSlideController(PlayerMovement player, Rigidbody2D playerRigidbody, PlayerMovementStats movementStats, JumpHandler jumpHandler)
+        public WallSlideController(PlayerMovement player)
         {
-            _playerMovement = player;
-            _playerRigidbody = playerRigidbody;
-            _movementStats = movementStats;
-            _jumpHandler = jumpHandler;
+            _playerMovement = player;;
         }
         public void WallSlideCheck()
         {
@@ -24,13 +16,13 @@ namespace PlayerMovementRefactoring
             {
                 if (_playerMovement.VerticalVelocity < 0f && !_playerMovement._isWallSliding)
                 {
-                    _jumpHandler.ResetJumpValues();
-                    ResetWallJumpValues();
-                    ResetDashValues();
+                    _playerMovement.ResetJumpValues();
+                    _playerMovement.ResetWallJumpValues();
+                    _playerMovement.ResetDashValues();
 
                     if (_playerMovement.MovementStats.ResetDashOnWallSlide)
                     {
-                        ResetDashes();
+                        _playerMovement.ResetDashes();
                     }
 
                     _playerMovement._isWallSlideFalling = false;
@@ -46,23 +38,14 @@ namespace PlayerMovementRefactoring
             else if (_playerMovement._isWallSliding && !_playerMovement._isTouchingWall && !_playerMovement._isGrounded && !_playerMovement._isWallSlideFalling)
             {
                 _playerMovement._isWallSlideFalling = true;
-                StopWallSlide();
+                _playerMovement.StopWallSlide();
             }
             else
             {
-                StopWallSlide();
+                _playerMovement.StopWallSlide();
             }
         }
 
-        private void StopWallSlide()
-        {
-            if (_playerMovement._isWallSliding)
-            {
-                _playerMovement._numberOfJumpsUsed++;
-
-                _playerMovement._isWallSliding = false;
-            }
-        }
 
         public void WallSlide()
         {

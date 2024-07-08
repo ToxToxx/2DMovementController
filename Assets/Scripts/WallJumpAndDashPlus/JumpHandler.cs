@@ -1,29 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlayerMovementRefactoring
 {
-    public class JumpHandler : MonoBehaviour
+    public class JumpHandler
     {
-        private PlayerMovement _playerMovement;
-        private Rigidbody2D _playerRigidbody;
-        private PlayerMovementStats _movementStats;
+        private readonly PlayerMovement _playerMovement;
 
-        public JumpHandler(PlayerMovement player, Rigidbody2D playerRigidbody, PlayerMovementStats movementStats)
+        public JumpHandler(PlayerMovement player)
         {
             _playerMovement = player;
-            _playerRigidbody = playerRigidbody;
-            _movementStats = movementStats;
         }
-        public void ResetJumpValues()
-        {
-            _playerMovement._isJumping = false;
-            _playerMovement._isFalling = false;
-            _playerMovement._isFastFalling = false;
-            _playerMovement._fastFallTime = 0f;
-            _playerMovement._isPastApexThreshold = false;
-        }
+
         public void JumpChecks()
         {
             if (InputManager.JumpWasPressed)
@@ -103,7 +90,7 @@ namespace PlayerMovementRefactoring
                 _playerMovement._isJumping = true;
             }
 
-            ResetWallJumpValues();
+            _playerMovement.ResetWallJumpValues();
 
             _playerMovement._jumpBufferTimer = 0f;
             _playerMovement._numberOfJumpsUsed += numberOfJumpsUsed;

@@ -1,11 +1,8 @@
-using PlayerMovementRunJumpSeparateClasses;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlayerMovementRefactoring
 {
-    public class GroundMovement : MonoBehaviour
+    public class GroundMovement
     {
         private PlayerMovement _playerMovement;
 

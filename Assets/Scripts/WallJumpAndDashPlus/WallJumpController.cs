@@ -1,21 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+
 namespace PlayerMovementRefactoring
 {
-    public class WallJumpController : MonoBehaviour
+    public class WallJumpController
     {
         private PlayerMovement _playerMovement;
-        private Rigidbody2D _playerRigidbody;
-        private PlayerMovementStats _movementStats;
 
-        public WallJumpController(PlayerMovement player, Rigidbody2D playerRigidbody, PlayerMovementStats movementStats)
+        public WallJumpController(PlayerMovement player)
         {
             _playerMovement = player;
-            _playerRigidbody = playerRigidbody;
-            _movementStats = movementStats;
         }
-        private void WallJumpCheck()
+        public void WallJumpCheck()
         {
             if (ShouldApplyPostWallJumpBuffer())
             {
@@ -58,8 +54,8 @@ namespace PlayerMovementRefactoring
                 _playerMovement._useWallJumpMoveStats = true;
             }
 
-            StopWallSlide();
-            ResetJumpValues();
+            _playerMovement.StopWallSlide();
+            _playerMovement.ResetJumpValues();
             _playerMovement._wallJumpTime = 0f;
 
             _playerMovement.VerticalVelocity = _playerMovement.MovementStats.InitialWallJumpVelocity;
@@ -67,7 +63,7 @@ namespace PlayerMovementRefactoring
             int dirMultiplier = 0;
             Vector2 hitPoint = _playerMovement._lastWallHit.collider.ClosestPoint(_playerMovement._bodyCollider.bounds.center);
 
-            if (hitPoint.x > transform.position.x)
+            if (hitPoint.x > _playerMovement.transform.position.x)
             {
                 dirMultiplier = -1;
             }
@@ -76,7 +72,7 @@ namespace PlayerMovementRefactoring
             _playerMovement.HorizontalVelocity = Mathf.Abs(_playerMovement.MovementStats.WallJumpDirection.x) * dirMultiplier;
         }
 
-        private void WallJump()
+        public void WallJump()
         {
             //Apply Wall Jump Gravity
             if (_playerMovement._isWallJumping)
@@ -102,63 +98,76 @@ namespace PlayerMovementRefactoring
 
                     if (_playerMovement._wallJumpApexPoint > _playerMovement.MovementStats.ApexThreshhold)
                     {
-                        if (!_isPastWallJumpApexThreshold)
+                        if (!_playerMovement._isPastWallJumpApexThreshold)
                         {
-                            _isPastWallJumpApexThreshold = true;
-                            _timePastWallJumpApexThreshold = 0f;
+                            _playerMovement._isPastWallJumpApexThreshold = true;
+                            _playerMovement._timePastWallJumpApexThreshold = 0f;
                         }
-                        if (_isPastWallJumpApexThreshold)
+                        if (_playerMovement._isPastWallJumpApexThreshold)
                         {
-                            _timePastWallJumpApexThreshold += Time.fixedDeltaTime;
-                            if (_timePastWallJumpApexThreshold < MovementStats.ApexHangTime)
+                            _playerMovement._timePastWallJumpApexThreshold += Time.fixedDeltaTime;
+                            if (_playerMovement._timePastWallJumpApexThreshold < _playerMovement.MovementStats.ApexHangTime)
                             {
-                                VerticalVelocity = 0f;
+                                _playerMovement.VerticalVelocity = 0f;
                             }
                             else
                             {
-                                VerticalVelocity = -0.01f;
+                                _playerMovement.VerticalVelocity = -0.01f;
                             }
                         }
                     }
                     // Gravity in ascending but not past apex threshold
-                    else if (!_isWallJumpFastFalling)
+                    else if (!_playerMovement._isWallJumpFastFalling)
                     {
-                        VerticalVelocity += MovementStats.WallJumpGravity * Time.fixedDeltaTime;
+                        _playerMovement.VerticalVelocity += _playerMovement.MovementStats.WallJumpGravity * Time.fixedDeltaTime;
 
-                        if (_isPastWallJumpApexThreshold)
+                        if (_playerMovement._isPastWallJumpApexThreshold)
                         {
-                            _isPastWallJumpApexThreshold = false;
+                            _playerMovement._isPastWallJumpApexThreshold = false;
                         }
                     }
                 }
                 // Gravity in Descending
-                else if (!_isWallJumpFastFalling)
+                else if (!_playerMovement._isWallJumpFastFalling)
                 {
-                    VerticalVelocity += MovementStats.WallJumpGravity * Time.fixedDeltaTime;
+                    _playerMovement.VerticalVelocity += _playerMovement.MovementStats.WallJumpGravity * Time.fixedDeltaTime;
                 }
 
-                else if (VerticalVelocity < 0f)
+                else if (_playerMovement.VerticalVelocity < 0f)
                 {
-                    if (!_isWallJumpFalling)
-                        _isWallJumpFalling = true;
+                    if (!_playerMovement._isWallJumpFalling)
+                        _playerMovement._isWallJumpFalling = true;
                 }
             }
 
             //handle wall jump cut time
-            if (_isWallJumpFastFalling)
+            if (_playerMovement._isWallJumpFastFalling)
             {
-                if (_wallJUmpFastFallTime >= MovementStats.TimeForUpwardsCancel)
+                if (_playerMovement._wallJUmpFastFallTime >= _playerMovement.MovementStats.TimeForUpwardsCancel)
                 {
-                    VerticalVelocity += MovementStats.WallJumpGravity * MovementStats.WallJumpGravityOnReleaseMultiplier * Time.fixedDeltaTime;
+                    _playerMovement.VerticalVelocity += _playerMovement.MovementStats.WallJumpGravity * _playerMovement.MovementStats.WallJumpGravityOnReleaseMultiplier * Time.fixedDeltaTime;
                 }
-                else if (_wallJUmpFastFallTime < MovementStats.TimeForUpwardsCancel)
+                else if (_playerMovement._wallJUmpFastFallTime < _playerMovement.MovementStats.TimeForUpwardsCancel)
                 {
-                    VerticalVelocity = Mathf.Lerp(_wallJumpFastFallReleaseSpeed, 0f, (_wallJUmpFastFallTime / MovementStats.TimeForUpwardsCancel));
+                    _playerMovement.VerticalVelocity = Mathf.Lerp(_playerMovement._wallJumpFastFallReleaseSpeed, 0f, (_playerMovement._wallJUmpFastFallTime / _playerMovement.MovementStats.TimeForUpwardsCancel));
                 }
 
-                _wallJUmpFastFallTime += Time.fixedDeltaTime;
+                _playerMovement._wallJUmpFastFallTime += Time.fixedDeltaTime;
             }
         }
+
+        public bool ShouldApplyPostWallJumpBuffer()
+        {
+            if (!_playerMovement._isGrounded && (_playerMovement._isTouchingWall || _playerMovement._isWallSliding))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }
 

@@ -1,6 +1,3 @@
-using PlayerMovementRunJumpSeparateClasses;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace PlayerMovementRefactoring
@@ -18,10 +15,15 @@ namespace PlayerMovementRefactoring
         private JumpHandler _jumpHandler;
         private LandFallController _landFallController;
         private WallSlideController _wallSlideController;
+        private WallJumpController _wallJumpController;
+        private DashController _dashController;
+        private CollisionChecksController _collisionChecksController;
+        private TimerController _timerController;
 
+        [Header ("Variables")]
         // movement variables
         public float HorizontalVelocity;
-        public bool _isFacingRight;
+        public bool _isFacingRight = true;
 
         //collision check variables
         public RaycastHit2D _groundHit;
@@ -90,29 +92,35 @@ namespace PlayerMovementRefactoring
             _playerRigidbody = GetComponent<Rigidbody2D>();
 
             _groundMovement = new GroundMovement(this);
-            _jumpHandler = new JumpHandler(this, _playerRigidbody, MovementStats);
-            _landFallController = new LandFallController(this, _playerRigidbody, MovementStats, _jumpHandler);
-            _wallSlideController = new WallSlideController(this, _playerRigidbody, MovementStats, _jumpHandler);
+            _jumpHandler = new JumpHandler(this);
+            _landFallController = new LandFallController(this);
+            _wallSlideController = new WallSlideController(this);
+            _wallJumpController = new WallJumpController(this);
+            _dashController = new DashController(this);
+            _collisionChecksController = new CollisionChecksController(this);
+            _timerController = new TimerController(this, _wallJumpController);
+
+            _isFacingRight = true;
         }
 
         private void Update()
         {
-            CountTimers();
+            _timerController.CountTimers();
             _jumpHandler.JumpChecks();
             _landFallController.LandCheck();
             _wallSlideController.WallSlideCheck();
-            WallJumpCheck();
-            DashCheck();
+            _wallJumpController.WallJumpCheck();
+            _dashController.DashCheck();
         }
 
         private void FixedUpdate()
         {
-            CollisionChecks();
+            _collisionChecksController.CollisionChecks();
             _jumpHandler.Jump();
             _landFallController.Fall();
             _wallSlideController.WallSlide();
-            WallJump();
-            Dash();
+            _wallJumpController.WallJump();
+            _dashController.Dash();
 
             if (_isGrounded)
             {
@@ -178,6 +186,49 @@ namespace PlayerMovementRefactoring
             }
 
             _playerRigidbody.velocity = new Vector2(HorizontalVelocity, VerticalVelocity);
+        }
+
+        public void ResetDashValues()
+        {
+            _isDashFastFalling = false;
+            _dashOnGroundTimer = -0.01f;
+        }
+
+        public void ResetDashes()
+        {
+            _numberOfDashesUsed = 0;
+        }
+
+        public void ResetWallJumpValues()
+        {
+            _isWallSlideFalling = false;
+            _useWallJumpMoveStats = false;
+            _isWallJumping = false;
+            _isWallJumpFastFalling = false;
+            _isWallJumpFalling = false;
+            _isPastWallJumpApexThreshold = false;
+
+            _wallJumpFastFallReleaseSpeed = 0f;
+            _wallJumpTime = 0f;
+        }
+
+        public void ResetJumpValues()
+        {
+            _isJumping = false;
+            _isFalling = false;
+            _isFastFalling = false;
+            _fastFallTime = 0f;
+            _isPastApexThreshold = false;
+        }
+
+        public void StopWallSlide()
+        {
+            if (_isWallSliding)
+            {
+                _numberOfJumpsUsed++;
+
+                _isWallSliding = false;
+            }
         }
     }
 }
