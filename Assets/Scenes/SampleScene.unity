@@ -412,8 +412,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1500121103}
   - {fileID: 1896766343}
+  - {fileID: 1500121103}
   m_Father: {fileID: 1023734413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &337076929
@@ -992,7 +992,6 @@ GameObject:
   - component: {fileID: 1023734412}
   - component: {fileID: 1023734414}
   - component: {fileID: 1023734415}
-  - component: {fileID: 1023734416}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1103,7 +1102,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1023734411}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ca6782b8dd2cc84585a41c2961d1931, type: 3}
   m_Name: 
@@ -1111,22 +1110,6 @@ MonoBehaviour:
   MovementStats: {fileID: 11400000, guid: 7f90d67d1099a2c4dbe7fe7f7d19def3, type: 2}
   _feetCollider: {fileID: 1896766344}
   _bodyCollider: {fileID: 1500121104}
---- !u!114 &1023734416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1023734411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c4467b5f01c3aa4890fd6f7bd7bdf3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MovementStats: {fileID: 11400000, guid: 7f90d67d1099a2c4dbe7fe7f7d19def3, type: 2}
-  _feetCollider: {fileID: 1896766344}
-  _bodyCollider: {fileID: 1500121104}
-  VerticalVelocity: 0
 --- !u!1 &1204262574
 GameObject:
   m_ObjectHideFlags: 0
