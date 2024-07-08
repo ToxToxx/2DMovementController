@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _playerRigidbody;
 
     // movement variables
-    private Vector2 _moveVelocity;
+    public float _horizontalVelocity {get; private set;}
     private bool _isFacingRight;
 
     //collision check variables
@@ -22,6 +22,11 @@ public class PlayerMovement : MonoBehaviour
     private RaycastHit2D _headHit;
     private bool _isGrounded;
     private bool _bumpedHead;
+
+    //wall collision check variables
+    private RaycastHit2D _wallHit;
+    private RaycastHit2D _lastWallHit;
+    private bool _isTouchingWall;
 
     //jump variables
     public float VerticalVelocity { get; private set; }
@@ -44,6 +49,36 @@ public class PlayerMovement : MonoBehaviour
     //coyote time vars
     private float _coyoteTimer;
 
+    //wall slide
+    private bool _isWallSliding;
+    private bool _isWallSlideFalling;
+
+    //wall jump
+    private bool _useWallJumpMoveStats;
+    private bool _isWallJumping;
+    private float _wallJumpTime;
+    private bool _isWallJumpFastFalling;
+    private bool _isWallJUmpFalling;
+    private float _wallJUmpFastFallTime;
+    private float _wallJumpFastFallReleaseSpeed;
+
+    private float _wallJumpPostBufferTimer;
+
+    private float _wallJumpApexPoint;
+    private float _timePastWallJumpApexThreshold;
+    private bool _isPastWallJumpApexThreshold;
+
+    //dash vars
+    private bool _isDashing;
+    private bool _isAirDashing;
+    private float _dashTimer;
+    private float _dashOnGroundTimer;
+    private int _numberOfDashesUsed;
+    private Vector2 _dashDirection;
+    private bool _isDashFastFalling;
+    private float _dashFastFallTime;
+    private float _dashFastFallReleaseSpeed;
+
     private void Awake()
     {
         _isFacingRight = true;
@@ -55,12 +90,14 @@ public class PlayerMovement : MonoBehaviour
     {
         CountTimers();
         JumpChecks();
+        LandCheck();
     }
 
     private void FixedUpdate()
     {
         CollisionChecks();
         Jump();
+        Fall();
 
         if (_isGrounded)
         {
@@ -70,31 +107,39 @@ public class PlayerMovement : MonoBehaviour
         {
             Move(MovementStats.AirAcceleration, MovementStats.AirDeceleration, InputManager.Movement);
         }
+
+        ApplyVelocity();
+    }
+
+    private void ApplyVelocity()
+    {
+        //clamp fall speed
+        VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
+
+        _playerRigidbody.velocity = new Vector2(_horizontalVelocity, VerticalVelocity);
     }
 
     #region Movement
 
     private void Move(float acceleration, float deceleration, Vector2 moveInput)
     {
-        if (moveInput != Vector2.zero)
+        if (Mathf.Abs(moveInput.x) >= MovementStats.MoveTreshold)
         {
             TurnCheck(moveInput);
 
-            Vector2 targetVelocity = Vector2.zero;
+            float targetVelocity = 0f;
             if (InputManager.RunIsHeld)
             {
-                targetVelocity = new Vector2(moveInput.x, 0f) * MovementStats.MaxRunSpeed;
+                targetVelocity = moveInput.x * MovementStats.MaxRunSpeed;
             }
             else
-            { targetVelocity = new Vector2(moveInput.x, 0f) * MovementStats.MaxWalkSpeed; }
+            { targetVelocity = moveInput.x * MovementStats.MaxWalkSpeed; }
 
-            _moveVelocity = Vector2.Lerp(_moveVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
-            _playerRigidbody.velocity = new Vector2(_moveVelocity.x, _playerRigidbody.velocity.y);
+            _horizontalVelocity = Mathf.Lerp(_horizontalVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
         }
-        else if (moveInput == Vector2.zero)
+        else if (Mathf.Abs(moveInput.x) <= MovementStats.MoveTreshold)
         {
-            _moveVelocity = Vector2.Lerp(_moveVelocity, Vector2.zero, deceleration * Time.fixedDeltaTime);
-            _playerRigidbody.velocity = new Vector2(_moveVelocity.x, _playerRigidbody.velocity.y);
+            _horizontalVelocity = Mathf.Lerp(_horizontalVelocity, 0f, deceleration * Time.fixedDeltaTime);
         }
     }
 
@@ -123,6 +168,38 @@ public class PlayerMovement : MonoBehaviour
             transform.Rotate(0f, -180f, 0f);
         }
     }
+    #endregion
+
+    #region Land/Fall
+
+    private void LandCheck()
+    {
+        //landed logic
+        if ((_isJumping || _isFalling) && _isGrounded && VerticalVelocity <= 0f)
+        {
+            _isJumping = false;
+            _isFalling = false;
+            _isFastFalling = false;
+            _isPastApexThreshold = false;
+            _fastFallTime = 0f;
+            _numberOfJumpsUsed = 0;
+            VerticalVelocity = Physics2D.gravity.y;
+        }
+    }
+
+    private void Fall()
+    {
+        //normal gravity while falling
+        if (!_isGrounded && !_isJumping)
+        {
+            if (!_isFalling)
+            {
+                _isFalling = true;
+            }
+            VerticalVelocity += MovementStats.Gravity * Time.fixedDeltaTime;
+        }
+    }
+
     #endregion
 
     #region Jump
@@ -184,17 +261,6 @@ public class PlayerMovement : MonoBehaviour
             _isFastFalling = false;
         }
 
-        //landed logic
-        if((_isJumping || _isFalling) && _isGrounded && VerticalVelocity <= 0f)
-        {
-            _isJumping = false;
-            _isFalling = false;
-            _isFastFalling = false;
-            _isPastApexThreshold = false;
-            _fastFallTime = 0f;         
-            _numberOfJumpsUsed = 0;
-            VerticalVelocity = Physics2D.gravity.y;
-        }
     }
 
     private void InitiateJump(int numberOfJumpsUsed)
@@ -248,7 +314,7 @@ public class PlayerMovement : MonoBehaviour
                 }
 
                 //gravity of ascending not past apex threshold
-                else
+                else if (!_isFastFalling)
                 {
                     VerticalVelocity += MovementStats.Gravity * Time.fixedDeltaTime;
                     if (_isPastApexThreshold)
@@ -285,21 +351,6 @@ public class PlayerMovement : MonoBehaviour
             }
             _fastFallTime += Time.fixedDeltaTime;
         }
-
-        //normal gravity while falling
-        if(!_isGrounded && !_isJumping)
-        {
-            if (!_isFalling)
-            {
-                _isFalling = true;
-            }
-            VerticalVelocity += MovementStats.Gravity * Time.fixedDeltaTime;
-        }
-
-        //clamp fall speed
-        VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
-
-        _playerRigidbody.velocity = new Vector2(_playerRigidbody.velocity.x, VerticalVelocity);
     }
     #endregion
 
