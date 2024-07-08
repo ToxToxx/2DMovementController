@@ -12,6 +12,10 @@ public class PlayerMovementStats : ScriptableObject
     [Range(0.25f, 50f)] public float AirAcceleration = 5f;
     [Range(0.25f, 50f)] public float AirDeceleration = 5f;
 
+    [Header("Wall Acceleration")]
+    [Range(0.25f, 50f)] public float WallJumpMoveAceleration = 5f;
+    [Range(0.25f, 50f)] public float WallJumpMoveDeceleration= 5f;
+
     [Header("Run")]
     [Range(1f, 100f)] public float MaxRunSpeed = 20f;
 
@@ -20,6 +24,10 @@ public class PlayerMovementStats : ScriptableObject
     public float GroundDetectionRayLength = 0.02f;
     public float HeadDetectionRayLength = 0.02f;
     [Range(0f, 1f)] public float HeadWidth = 0.75f;
+
+    [Header("Wall collision checks")]
+    public float WallDetectionRayLength = 0.125f;
+    [Range(0.01f, 2f)] public float WallDetectionRayHeightMultiplier = 0.9f;
 
     [Header("Jump")]
     public float JumpHeight = 6.5f;
@@ -41,6 +49,10 @@ public class PlayerMovementStats : ScriptableObject
 
     [Header("Jump Coyote Time")]
     [Range(0f, 1f)] public float JumpCoyoteTime = 0.1f;
+
+    [Header("Reset Jump Option")]
+    public bool ResetJumpOnWallSlide = true;
+
     public float Gravity { get; private set; }
     public float InitialJumpVelocity { get; private set; }
     public float AdjustedJumpHeight { get; private set; }
