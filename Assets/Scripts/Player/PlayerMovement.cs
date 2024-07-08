@@ -756,6 +756,33 @@ public class PlayerMovement : MonoBehaviour
             }
 
             HorizontalVelocity = MovementStats.DashSpeed * _dashDirection.x;
+
+            if(_dashDirection.y != 0f || _isAirDashing)
+            {
+                VerticalVelocity = MovementStats.DashSpeed * _dashDirection.y;
+            }
+        }
+
+        //Handle dash cut time
+        else if (_isDashFastFalling)
+        {
+            if(VerticalVelocity >0f) 
+            {
+                if(_dashFastFallTime < MovementStats.DashTimeForUpwardsCancel)
+                {
+                    VerticalVelocity = Mathf.Lerp(_dashFastFallReleaseSpeed, 0f, (_dashFastFallTime / MovementStats.DashTimeForUpwardsCancel));
+                }
+                else if (_dashFastFallTime >= MovementStats.DashTimeForUpwardsCancel)
+                {
+                    VerticalVelocity += MovementStats.Gravity * MovementStats.DashGravityOnReleaseMultiplier * Time.fixedDeltaTime;
+                }
+
+                _dashFastFallTime += Time.fixedDeltaTime;
+            }
+            else
+            {
+                VerticalVelocity += MovementStats.Gravity * MovementStats.DashGravityOnReleaseMultiplier * Time.fixedDeltaTime;
+            }
         }
     }
     private void ResetDashValues()
@@ -852,6 +879,12 @@ public class PlayerMovement : MonoBehaviour
         if(!ShouldApplyPostWallJumpBuffer())
         {
             _wallJumpPostBufferTimer -= Time.deltaTime;
+        }
+
+        //dash timer
+        if(_isGrounded)
+        {
+            _dashOnGroundTimer -= Time.deltaTime;
         }
     }
 
