@@ -1,76 +1,81 @@
 using UnityEngine;
 
-public class PlayerMovementRedo : MonoBehaviour
+
+namespace PlayerMovementRunJumpSeparateClasses
 {
-
-    [Header("References")]
-    public PlayerMovementStats MovementStats;
-    [SerializeField] private Collider2D _feetCollider;
-    [SerializeField] private Collider2D _bodyCollider;
-
-    private Rigidbody2D _playerRigidbody;
-
-    private GroundMovement _groundMovement;
-    private AirMovement _airMovement;
-    private JumpHandler _jumpHandler;
-
-    private bool _isFacingRight = true;
-    public float VerticalVelocity;
-
-    private void Awake()
+    public class PlayerMovementRedo : MonoBehaviour
     {
-        _playerRigidbody = GetComponent<Rigidbody2D>();
 
-        _groundMovement = new GroundMovement(this, _playerRigidbody, MovementStats);
-        _airMovement = new AirMovement(this, _playerRigidbody, MovementStats);
-        _jumpHandler = new JumpHandler(this, _playerRigidbody, MovementStats, _feetCollider, _bodyCollider);
-    }
+        [Header("References")]
+        public PlayerMovementStats MovementStats;
+        [SerializeField] private Collider2D _feetCollider;
+        [SerializeField] private Collider2D _bodyCollider;
 
-    private void Update()
-    {
-        _jumpHandler.CountTimers();
-        _jumpHandler.JumpChecks();
-    }
+        private Rigidbody2D _playerRigidbody;
 
-    private void FixedUpdate()
-    {
-        _jumpHandler.CollisionChecks();
+        private GroundMovement _groundMovement;
+        private AirMovement _airMovement;
+        private JumpHandler _jumpHandler;
 
-        if (_jumpHandler.IsGrounded)
+        private bool _isFacingRight = true;
+        public float VerticalVelocity;
+
+        private void Awake()
         {
-            _groundMovement.Move(InputManager.Movement);
-        }
-        else
-        {
-            _airMovement.Move(InputManager.Movement);
+            _playerRigidbody = GetComponent<Rigidbody2D>();
+
+            _groundMovement = new GroundMovement(this, _playerRigidbody, MovementStats);
+            _airMovement = new AirMovement(this, _playerRigidbody, MovementStats);
+            _jumpHandler = new JumpHandler(this, _playerRigidbody, MovementStats, _feetCollider, _bodyCollider);
         }
 
-        _jumpHandler.ApplyJump();
-    }
+        private void Update()
+        {
+            _jumpHandler.CountTimers();
+            _jumpHandler.JumpChecks();
+        }
 
-    public void TurnCheck(Vector2 moveInput)
-    {
-        if (_isFacingRight && moveInput.x < 0)
+        private void FixedUpdate()
         {
-            Turn(false);
-        }
-        else if (!_isFacingRight && moveInput.x > 0)
-        {
-            Turn(true);
-        }
-    }
+            _jumpHandler.CollisionChecks();
 
-    private void Turn(bool turnRight)
-    {
-        if (turnRight)
-        {
-            _isFacingRight = true;
-            transform.Rotate(0f, 180f, 0f);
+            if (_jumpHandler.IsGrounded)
+            {
+                _groundMovement.Move(InputManager.Movement);
+            }
+            else
+            {
+                _airMovement.Move(InputManager.Movement);
+            }
+
+            _jumpHandler.ApplyJump();
         }
-        else
+
+        public void TurnCheck(Vector2 moveInput)
         {
-            _isFacingRight = false;
-            transform.Rotate(0f, -180f, 0f);
+            if (_isFacingRight && moveInput.x < 0)
+            {
+                Turn(false);
+            }
+            else if (!_isFacingRight && moveInput.x > 0)
+            {
+                Turn(true);
+            }
+        }
+
+        private void Turn(bool turnRight)
+        {
+            if (turnRight)
+            {
+                _isFacingRight = true;
+                transform.Rotate(0f, 180f, 0f);
+            }
+            else
+            {
+                _isFacingRight = false;
+                transform.Rotate(0f, -180f, 0f);
+            }
         }
     }
 }
+

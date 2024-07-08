@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _playerRigidbody;
 
     // movement variables
-    public float _horizontalVelocity {get; private set;}
+    public float HorizontalVelocity {get; private set;}
     private bool _isFacingRight;
 
     //collision check variables
@@ -116,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
         //clamp fall speed
         VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
 
-        _playerRigidbody.velocity = new Vector2(_horizontalVelocity, VerticalVelocity);
+        _playerRigidbody.velocity = new Vector2(HorizontalVelocity, VerticalVelocity);
     }
 
     #region Movement
@@ -135,11 +135,11 @@ public class PlayerMovement : MonoBehaviour
             else
             { targetVelocity = moveInput.x * MovementStats.MaxWalkSpeed; }
 
-            _horizontalVelocity = Mathf.Lerp(_horizontalVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+            HorizontalVelocity = Mathf.Lerp(HorizontalVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
         }
         else if (Mathf.Abs(moveInput.x) <= MovementStats.MoveTreshold)
         {
-            _horizontalVelocity = Mathf.Lerp(_horizontalVelocity, 0f, deceleration * Time.fixedDeltaTime);
+            HorizontalVelocity = Mathf.Lerp(HorizontalVelocity, 0f, deceleration * Time.fixedDeltaTime);
         }
     }
 
@@ -354,6 +354,12 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
+    #region Wall Slide
+
+
+
+    #endregion
+
     #region Collision Checks
 
     private void IsGrounded()
@@ -385,10 +391,16 @@ public class PlayerMovement : MonoBehaviour
             _bumpedHead = false;
         }
     }
+
+    private void IsTouchingWall()
+    {
+
+    }
     private void CollisionChecks()
     {
         IsGrounded();
         BumpedHead();
+        IsTouchingWall();
     }
 
     #endregion
