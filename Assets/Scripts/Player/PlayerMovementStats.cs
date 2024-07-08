@@ -53,6 +53,26 @@ public class PlayerMovementStats : ScriptableObject
     [Header("Reset Jump Option")]
     public bool ResetJumpOnWallSlide = true;
 
+    [Header("Wall slide")]
+    [Min(0.01f)] public float WallSlideSpeed = 5f;
+    [Range(0.25f, 50f)] public float WallSlideDecelerationSpeed = 50f;
+
+    [Header("Wall jump")]
+    public Vector2 WallJumpDirection = new Vector2(-20f, 6.5f);
+    [Range(0f, 1f)] public float WallJumpPostBufferTime = 0.125f;
+    [Range(0.01f, 5f)] public float WallJumpGravityOnReleaseMultiplier = 1f;
+
+    [Header("Dash")]
+    [Range(0f, 1f)] public float DashTime = 0.11f;
+    [Range(1f, 200f)] public float DashSpeed = 40f;
+    [Range(0f, 1f)] public float TimeBtwDashesOnGround = 0.225f;
+    public bool ResetDashOnWallSlide = true;
+    [Range(0, 5)] public int NumberOfDashes = 2;
+    [Range(0f, 0.5f)] public float DashDiagonallyBias = 0.4f;
+
+    [Header("Dash Cancel Time")]
+    [Range(0.01f, 5f)] public float DashGravityOnReleaseMultiplier = 1f;
+
     public float Gravity { get; private set; }
     public float InitialJumpVelocity { get; private set; }
     public float AdjustedJumpHeight { get; private set; }
