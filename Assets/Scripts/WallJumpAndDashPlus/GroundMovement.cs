@@ -13,7 +13,7 @@ namespace PlayerMovementRefactoring
 
         public void Move(float acceleration, float deceleration, Vector2 moveInput)
         {
-            if (!_playerMovement._isDashing)
+            if (!_playerMovement.IsDashing)
             {
                 if (Mathf.Abs(moveInput.x) >= _playerMovement.MovementStats.MoveTreshold)
                 {

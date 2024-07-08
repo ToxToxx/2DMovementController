@@ -14,24 +14,24 @@ namespace PlayerMovementRefactoring
         }
         public void CountTimers()
         {
-            _playerMovement._jumpBufferTimer -= Time.deltaTime;
+            _playerMovement.JumpBufferTimer -= Time.deltaTime;
 
 
-            if (!_playerMovement._isGrounded)
+            if (!_playerMovement.IsGrounded)
             {
-                _playerMovement._coyoteTimer -= Time.deltaTime;
+                _playerMovement.CoyoteTimer -= Time.deltaTime;
             }
-            else _playerMovement._coyoteTimer = _playerMovement.MovementStats.JumpCoyoteTime;
+            else _playerMovement.CoyoteTimer = _playerMovement.MovementStats.JumpCoyoteTime;
 
             if (!_wallJumpController.ShouldApplyPostWallJumpBuffer())
             {
-                _playerMovement._wallJumpPostBufferTimer -= Time.deltaTime;
+                _playerMovement.WallJumpPostBufferTimer -= Time.deltaTime;
             }
 
             //dash timer
-            if (_playerMovement._isGrounded)
+            if (_playerMovement.IsGrounded)
             {
-                _playerMovement._dashOnGroundTimer -= Time.deltaTime;
+                _playerMovement.DashOnGroundTimer -= Time.deltaTime;
             }
         }
 

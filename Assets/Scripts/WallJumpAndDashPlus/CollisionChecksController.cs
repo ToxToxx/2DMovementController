@@ -13,55 +13,55 @@ namespace PlayerMovementRefactoring
         }
         private void IsGrounded()
         {
-            Vector2 boxCastOrigin = new(_playerMovement._feetCollider.bounds.center.x, _playerMovement._feetCollider.bounds.min.y);
-            Vector2 boxCastSize = new(_playerMovement._feetCollider.bounds.size.x, _playerMovement.MovementStats.GroundDetectionRayLength);
+            Vector2 boxCastOrigin = new(_playerMovement.FeetCollider.bounds.center.x, _playerMovement.FeetCollider.bounds.min.y);
+            Vector2 boxCastSize = new(_playerMovement.FeetCollider.bounds.size.x, _playerMovement.MovementStats.GroundDetectionRayLength);
 
-            _playerMovement._groundHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.down, _playerMovement.MovementStats.GroundDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
-            if (_playerMovement._groundHit.collider != null)
+            _playerMovement.GroundHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.down, _playerMovement.MovementStats.GroundDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
+            if (_playerMovement.GroundHit.collider != null)
             {
-                _playerMovement._isGrounded = true;
+                _playerMovement.IsGrounded = true;
             }
-            else _playerMovement._isGrounded = false;
+            else _playerMovement.IsGrounded = false;
 
         }
 
         private void BumpedHead()
         {
-            Vector2 boxCastOrigin = new(_playerMovement._feetCollider.bounds.center.x, _playerMovement._bodyCollider.bounds.max.y);
-            Vector2 boxCastSize = new(_playerMovement._feetCollider.bounds.size.x * _playerMovement.MovementStats.HeadWidth, _playerMovement.MovementStats.HeadDetectionRayLength);
+            Vector2 boxCastOrigin = new(_playerMovement.FeetCollider.bounds.center.x, _playerMovement.BodyCollider.bounds.max.y);
+            Vector2 boxCastSize = new(_playerMovement.FeetCollider.bounds.size.x * _playerMovement.MovementStats.HeadWidth, _playerMovement.MovementStats.HeadDetectionRayLength);
 
-            _playerMovement._headHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.up, _playerMovement.MovementStats.HeadDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
-            if (_playerMovement._headHit.collider != null)
+            _playerMovement.HeadHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.up, _playerMovement.MovementStats.HeadDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
+            if (_playerMovement.HeadHit.collider != null)
             {
-                _playerMovement._bumpedHead = true;
+                _playerMovement.BumpedHead = true;
             }
             else
             {
-                _playerMovement._bumpedHead = false;
+                _playerMovement.BumpedHead = false;
             }
         }
 
         private void IsTouchingWall()
         {
             float originEndPoint = 0f;
-            if (_playerMovement._isFacingRight)
+            if (_playerMovement.IsFacingRight)
             {
-                originEndPoint = _playerMovement._bodyCollider.bounds.max.x;
+                originEndPoint = _playerMovement.BodyCollider.bounds.max.x;
             }
-            else originEndPoint = _playerMovement._bodyCollider.bounds.min.x;
+            else originEndPoint = _playerMovement.BodyCollider.bounds.min.x;
 
-            float adjustedHeight = _playerMovement._bodyCollider.bounds.size.y * _playerMovement.MovementStats.WallDetectionRayHeightMultiplier;
+            float adjustedHeight = _playerMovement.BodyCollider.bounds.size.y * _playerMovement.MovementStats.WallDetectionRayHeightMultiplier;
 
-            Vector2 boxCastOrigin = new(originEndPoint, _playerMovement._bodyCollider.bounds.center.y);
+            Vector2 boxCastOrigin = new(originEndPoint, _playerMovement.BodyCollider.bounds.center.y);
             Vector2 boxCastSize = new(_playerMovement.MovementStats.WallDetectionRayLength, adjustedHeight);
 
-            _playerMovement._wallHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, _playerMovement.transform.right, _playerMovement.MovementStats.WallDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
-            if (_playerMovement._wallHit.collider != null)
+            _playerMovement.WallHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, _playerMovement.transform.right, _playerMovement.MovementStats.WallDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
+            if (_playerMovement.WallHit.collider != null)
             {
-                _playerMovement._lastWallHit = _playerMovement._wallHit;
-                _playerMovement._isTouchingWall = true;
+                _playerMovement.LastWallHit = _playerMovement.WallHit;
+                _playerMovement.IsTouchingWall = true;
             }
-            else _playerMovement._isTouchingWall = false;
+            else _playerMovement.IsTouchingWall = false;
 
 
         }

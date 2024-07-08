@@ -15,96 +15,96 @@ namespace PlayerMovementRefactoring
         {
             if (InputManager.JumpWasPressed)
             {
-                if (_playerMovement._isWallSlideFalling && _playerMovement._wallJumpPostBufferTimer >= 0f)
+                if (_playerMovement.IsWallSlideFalling && _playerMovement.WallJumpPostBufferTimer >= 0f)
                 {
                     return;
                 }
 
-                else if (_playerMovement._isWallSliding || (_playerMovement._isTouchingWall && _playerMovement._isGrounded)) { return; }
+                else if (_playerMovement.IsWallSliding || (_playerMovement.IsTouchingWall && _playerMovement.IsGrounded)) { return; }
 
-                _playerMovement._jumpBufferTimer = _playerMovement.MovementStats.JumpBufferTime;
-                _playerMovement._jumpReleasedDuringBuffer = false;
+                _playerMovement.JumpBufferTimer = _playerMovement.MovementStats.JumpBufferTime;
+                _playerMovement.JumpReleasedDuringBufferTimer = false;
             }
 
             if (InputManager.JumpWasReleased)
             {
-                if (_playerMovement._jumpBufferTimer > 0)
+                if (_playerMovement.JumpBufferTimer > 0)
                 {
-                    _playerMovement._jumpReleasedDuringBuffer = true;
+                    _playerMovement.JumpReleasedDuringBufferTimer = true;
                 }
 
-                if (_playerMovement._isJumping && _playerMovement.VerticalVelocity > 0f)
+                if (_playerMovement.IsJumping && _playerMovement.VerticalVelocity > 0f)
                 {
-                    if (_playerMovement._isPastApexThreshold)
+                    if (_playerMovement.IsPastApexThreshold)
                     {
-                        _playerMovement._isPastApexThreshold = false;
-                        _playerMovement._isFastFalling = true;
-                        _playerMovement._fastFallTime = _playerMovement.MovementStats.TimeForUpwardsCancel;
+                        _playerMovement.IsPastApexThreshold = false;
+                        _playerMovement.IsFastFalling = true;
+                        _playerMovement.FastFallTime = _playerMovement.MovementStats.TimeForUpwardsCancel;
                         _playerMovement.VerticalVelocity = 0f;
                     }
                     else
                     {
-                        _playerMovement._isFastFalling = true;
-                        _playerMovement._fastFallReleaseSpeed = _playerMovement.VerticalVelocity;
+                        _playerMovement.IsFastFalling = true;
+                        _playerMovement.FastFallReleaseSpeed = _playerMovement.VerticalVelocity;
                     }
                 }
             }
 
             //Initiating Jump
-            if (_playerMovement._jumpBufferTimer > 0f && !_playerMovement._isJumping && (_playerMovement._isGrounded || _playerMovement._coyoteTimer > 0f))
+            if (_playerMovement.JumpBufferTimer > 0f && !_playerMovement.IsJumping && (_playerMovement.IsGrounded || _playerMovement.CoyoteTimer > 0f))
             {
                 InitiateJump(1);
 
-                if (_playerMovement._jumpReleasedDuringBuffer)
+                if (_playerMovement.JumpReleasedDuringBufferTimer)
                 {
-                    _playerMovement._isFastFalling = true;
-                    _playerMovement._fastFallReleaseSpeed = _playerMovement.VerticalVelocity;
+                    _playerMovement.IsFastFalling = true;
+                    _playerMovement.FastFallReleaseSpeed = _playerMovement.VerticalVelocity;
                 }
             }
 
             //Double jump logic
-            else if (_playerMovement._jumpBufferTimer > 0f && (_playerMovement._isJumping || _playerMovement._isWallJumping || _playerMovement._isWallSlideFalling || _playerMovement._isAirDashing || _playerMovement._isDashFastFalling) && !_playerMovement._isTouchingWall && _playerMovement._numberOfJumpsUsed < _playerMovement.MovementStats.NumberOfJumpsAllowed)
+            else if (_playerMovement.JumpBufferTimer > 0f && (_playerMovement.IsJumping || _playerMovement.IsWallJumping || _playerMovement.IsWallSlideFalling || _playerMovement.IsAirDashing || _playerMovement.IsDashFastFalling) && !_playerMovement.IsTouchingWall && _playerMovement.NumberOfJumpsUsed < _playerMovement.MovementStats.NumberOfJumpsAllowed)
             {
-                _playerMovement._isFastFalling = false;
+                _playerMovement.IsFastFalling = false;
                 InitiateJump(1);
 
-                if (_playerMovement._isDashFastFalling)
+                if (_playerMovement.IsDashFastFalling)
                 {
-                    _playerMovement._isDashFastFalling = false;
+                    _playerMovement.IsDashFastFalling = false;
                 }
             }
 
             //air jump after coyote time lapsed logic
-            else if (_playerMovement._jumpBufferTimer > 0f && _playerMovement._isFalling && !_playerMovement._isWallSlideFalling && _playerMovement._numberOfJumpsUsed < _playerMovement.MovementStats.NumberOfJumpsAllowed - 1)//fixed bugs of uneccesary double jump in air
+            else if (_playerMovement.JumpBufferTimer > 0f && _playerMovement.IsFalling && !_playerMovement.IsWallSlideFalling && _playerMovement.NumberOfJumpsUsed < _playerMovement.MovementStats.NumberOfJumpsAllowed - 1)//fixed bugs of uneccesary double jump in air
             {
                 InitiateJump(2); //because we are falling and it's air jump
-                _playerMovement._isFastFalling = false;
+                _playerMovement.IsFastFalling = false;
             }
 
         }
 
         private void InitiateJump(int numberOfJumpsUsed)
         {
-            if (!_playerMovement._isJumping)
+            if (!_playerMovement.IsJumping)
             {
-                _playerMovement._isJumping = true;
+                _playerMovement.IsJumping = true;
             }
 
             _playerMovement.ResetWallJumpValues();
 
-            _playerMovement._jumpBufferTimer = 0f;
-            _playerMovement._numberOfJumpsUsed += numberOfJumpsUsed;
+            _playerMovement.JumpBufferTimer = 0f;
+            _playerMovement.NumberOfJumpsUsed += numberOfJumpsUsed;
             _playerMovement.VerticalVelocity = _playerMovement.MovementStats.InitialJumpVelocity;
         }
         public void Jump()
         {
             //apply gravity
-            if (_playerMovement._isJumping)
+            if (_playerMovement.IsJumping)
             {
                 //check head bump
-                if (_playerMovement._bumpedHead)
+                if (_playerMovement.BumpedHead)
                 {
-                    _playerMovement._isFastFalling = true;
+                    _playerMovement.IsFastFalling = true;
 
                 }
 
@@ -112,19 +112,19 @@ namespace PlayerMovementRefactoring
                 if (_playerMovement.VerticalVelocity >= 0f)
                 {
                     //apex controls
-                    _playerMovement._apexPoint = Mathf.InverseLerp(_playerMovement.MovementStats.InitialJumpVelocity, 0f, _playerMovement.VerticalVelocity);
+                    _playerMovement.ApexPoint = Mathf.InverseLerp(_playerMovement.MovementStats.InitialJumpVelocity, 0f, _playerMovement.VerticalVelocity);
 
-                    if (_playerMovement._apexPoint > _playerMovement.MovementStats.ApexThreshhold)
+                    if (_playerMovement.ApexPoint > _playerMovement.MovementStats.ApexThreshhold)
                     {
-                        if (!_playerMovement._isPastApexThreshold)
+                        if (!_playerMovement.IsPastApexThreshold)
                         {
-                            _playerMovement._isPastApexThreshold = true;
-                            _playerMovement._timePastApexThreshold = 0f;
+                            _playerMovement.IsPastApexThreshold = true;
+                            _playerMovement.TimePastApexThreshold = 0f;
                         }
-                        if (_playerMovement._isPastApexThreshold)
+                        if (_playerMovement.IsPastApexThreshold)
                         {
-                            _playerMovement._timePastApexThreshold += Time.deltaTime;
-                            if (_playerMovement._timePastApexThreshold < _playerMovement.MovementStats.ApexHangTime)
+                            _playerMovement.TimePastApexThreshold += Time.deltaTime;
+                            if (_playerMovement.TimePastApexThreshold < _playerMovement.MovementStats.ApexHangTime)
                             {
                                 _playerMovement.VerticalVelocity = 0f;
                             }
@@ -136,42 +136,42 @@ namespace PlayerMovementRefactoring
                     }
 
                     //gravity of ascending not past apex threshold
-                    else if (!_playerMovement._isFastFalling)
+                    else if (!_playerMovement.IsFastFalling)
                     {
                         _playerMovement.VerticalVelocity += _playerMovement.MovementStats.Gravity * Time.fixedDeltaTime;
-                        if (_playerMovement._isPastApexThreshold)
+                        if (_playerMovement.IsPastApexThreshold)
                         {
-                            _playerMovement._isPastApexThreshold = false;
+                            _playerMovement.IsPastApexThreshold = false;
                         }
                     }
                 }
 
                 //gravity of descending
-                else if (!_playerMovement._isFastFalling)
+                else if (!_playerMovement.IsFastFalling)
                 {
                     _playerMovement.VerticalVelocity += _playerMovement.MovementStats.Gravity * _playerMovement.MovementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
                 }
                 else if (_playerMovement.VerticalVelocity < 0f)
                 {
-                    if (!_playerMovement._isFalling)
+                    if (!_playerMovement.IsFalling)
                     {
-                        _playerMovement._isFalling = true;
+                        _playerMovement.IsFalling = true;
                     }
                 }
             }
 
             //jump cut
-            if (_playerMovement._isFastFalling)
+            if (_playerMovement.IsFastFalling)
             {
-                if (_playerMovement._fastFallTime >= _playerMovement.MovementStats.TimeForUpwardsCancel)
+                if (_playerMovement.FastFallTime >= _playerMovement.MovementStats.TimeForUpwardsCancel)
                 {
                     _playerMovement.VerticalVelocity += _playerMovement.MovementStats.Gravity * _playerMovement.MovementStats.GravityReleaseMultiplier * Time.fixedDeltaTime;
                 }
-                else if (_playerMovement._fastFallTime < _playerMovement.MovementStats.TimeForUpwardsCancel)
+                else if (_playerMovement.FastFallTime < _playerMovement.MovementStats.TimeForUpwardsCancel)
                 {
-                    _playerMovement.VerticalVelocity = Mathf.Lerp(_playerMovement._fastFallReleaseSpeed, 0f, (_playerMovement._fastFallTime / _playerMovement.MovementStats.TimeForUpwardsCancel));
+                    _playerMovement.VerticalVelocity = Mathf.Lerp(_playerMovement.FastFallReleaseSpeed, 0f, (_playerMovement.FastFallTime / _playerMovement.MovementStats.TimeForUpwardsCancel));
                 }
-                _playerMovement._fastFallTime += Time.fixedDeltaTime;
+                _playerMovement.FastFallTime += Time.fixedDeltaTime;
             }
         }
     }

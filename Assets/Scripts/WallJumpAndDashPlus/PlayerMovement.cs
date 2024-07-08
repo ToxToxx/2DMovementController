@@ -6,8 +6,8 @@ namespace PlayerMovementRefactoring
     {
         [Header("References")]
         public PlayerMovementStats MovementStats;
-        public Collider2D _feetCollider;
-        public Collider2D _bodyCollider;
+        public Collider2D FeetCollider;
+        public Collider2D BodyCollider;
 
         private Rigidbody2D _playerRigidbody;
 
@@ -23,69 +23,69 @@ namespace PlayerMovementRefactoring
         [Header ("Variables")]
         // movement variables
         public float HorizontalVelocity;
-        public bool _isFacingRight = true;
+        public bool IsFacingRight = true;
 
         //collision check variables
-        public RaycastHit2D _groundHit;
-        public RaycastHit2D _headHit;
-        public bool _isGrounded;
-        public bool _bumpedHead;
+        public RaycastHit2D GroundHit;
+        public RaycastHit2D HeadHit;
+        public bool IsGrounded;
+        public bool BumpedHead;
 
         //wall collision check variables
-        public RaycastHit2D _wallHit;
-        public RaycastHit2D _lastWallHit;
-        public bool _isTouchingWall;
+        public RaycastHit2D WallHit;
+        public RaycastHit2D LastWallHit;
+        public bool IsTouchingWall;
 
         //jump variables
         public float VerticalVelocity;
-        public bool _isJumping;
-        public bool _isFastFalling;
-        public bool _isFalling;
-        public float _fastFallTime;
-        public float _fastFallReleaseSpeed;
-        public int _numberOfJumpsUsed;
+        public bool IsJumping;
+        public bool IsFastFalling;
+        public bool IsFalling;
+        public float FastFallTime;
+        public float FastFallReleaseSpeed;
+        public int NumberOfJumpsUsed;
 
         //apex variables
-        public float _apexPoint;
-        public float _timePastApexThreshold;
-        public bool _isPastApexThreshold;
+        public float ApexPoint;
+        public float TimePastApexThreshold;
+        public bool IsPastApexThreshold;
 
         //jump buffer vars
-        public float _jumpBufferTimer;
-        public bool _jumpReleasedDuringBuffer;
+        public float JumpBufferTimer;
+        public bool JumpReleasedDuringBufferTimer;
 
         //coyote time vars
-        public float _coyoteTimer;
+        public float CoyoteTimer;
 
         //wall slide
-        public bool _isWallSliding;
-        public bool _isWallSlideFalling;
+        public bool IsWallSliding;
+        public bool IsWallSlideFalling;
 
         //wall jump
-        public bool _useWallJumpMoveStats;
-        public bool _isWallJumping;
-        public float _wallJumpTime;
-        public bool _isWallJumpFastFalling;
-        public bool _isWallJumpFalling;
-        public float _wallJUmpFastFallTime;
-        public float _wallJumpFastFallReleaseSpeed;
+        public bool UseWallJumpMoveStats;
+        public bool IsWallJumping;
+        public float WallJumpTime;
+        public bool IsWallJumpFastFalling;
+        public bool IsWallJumpFalling;
+        public float WallJUmpFastFallTime;
+        public float WallJumpFastFallReleaseSpeed;
 
-        public float _wallJumpPostBufferTimer;
+        public float WallJumpPostBufferTimer;
 
-        public float _wallJumpApexPoint;
-        public float _timePastWallJumpApexThreshold;
-        public bool _isPastWallJumpApexThreshold;
+        public float WallJumpApexPoint;
+        public float TimePastWallJumpApexThreshold;
+        public bool IsPastWallJumpApexThreshold;
 
         //dash vars
-        public bool _isDashing;
-        public bool _isAirDashing;
-        public float _dashTimer;
-        public float _dashOnGroundTimer;
-        public int _numberOfDashesUsed;
-        public Vector2 _dashDirection;
-        public bool _isDashFastFalling;
-        public float _dashFastFallTime;
-        public float _dashFastFallReleaseSpeed;
+        public bool IsDashing;
+        public bool IsAirDashing;
+        public float DashTimer;
+        public float DashOnGroundTimer;
+        public int NumberOfDashesUsed;
+        public Vector2 DashDirection;
+        public bool IsDashFastFalling;
+        public float DashFastFallTime;
+        public float DashFastFallReleaseSpeed;
 
         private void Awake()
         {
@@ -100,7 +100,7 @@ namespace PlayerMovementRefactoring
             _collisionChecksController = new CollisionChecksController(this);
             _timerController = new TimerController(this, _wallJumpController);
 
-            _isFacingRight = true;
+            IsFacingRight = true;
         }
 
         private void Update()
@@ -122,7 +122,7 @@ namespace PlayerMovementRefactoring
             _wallJumpController.WallJump();
             _dashController.Dash();
 
-            if (_isGrounded)
+            if (IsGrounded)
             {
                 _groundMovement.Move(MovementStats.GroundAcceleration, MovementStats.GroundDeceleration, InputManager.Movement);
 
@@ -130,7 +130,7 @@ namespace PlayerMovementRefactoring
             else
             {
                 //wall jumping
-                if (_useWallJumpMoveStats)
+                if (UseWallJumpMoveStats)
                 {
                     _groundMovement.Move(MovementStats.WallJumpMoveAceleration, MovementStats.WallJumpMoveDeceleration, InputManager.Movement);
                 }
@@ -149,11 +149,11 @@ namespace PlayerMovementRefactoring
 
         public void TurnCheck(Vector2 moveInput)
         {
-            if (_isFacingRight && moveInput.x < 0)
+            if (IsFacingRight && moveInput.x < 0)
             {
                 Turn(false);
             }
-            else if (!_isFacingRight && moveInput.x > 0)
+            else if (!IsFacingRight && moveInput.x > 0)
             {
                 Turn(true);
             }
@@ -163,12 +163,12 @@ namespace PlayerMovementRefactoring
         {
             if (turnRight)
             {
-                _isFacingRight = true;
+                IsFacingRight = true;
                 transform.Rotate(0f, 180f, 0f);
             }
             else
             {
-                _isFacingRight = false;
+                IsFacingRight = false;
                 transform.Rotate(0f, -180f, 0f);
             }
         }
@@ -176,7 +176,7 @@ namespace PlayerMovementRefactoring
         public void ApplyVelocity()
         {
             //clamp fall speed
-            if (!_isDashing)
+            if (!IsDashing)
             {
                 VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
             }
@@ -190,44 +190,44 @@ namespace PlayerMovementRefactoring
 
         public void ResetDashValues()
         {
-            _isDashFastFalling = false;
-            _dashOnGroundTimer = -0.01f;
+            IsDashFastFalling = false;
+            DashOnGroundTimer = -0.01f;
         }
 
         public void ResetDashes()
         {
-            _numberOfDashesUsed = 0;
+            NumberOfDashesUsed = 0;
         }
 
         public void ResetWallJumpValues()
         {
-            _isWallSlideFalling = false;
-            _useWallJumpMoveStats = false;
-            _isWallJumping = false;
-            _isWallJumpFastFalling = false;
-            _isWallJumpFalling = false;
-            _isPastWallJumpApexThreshold = false;
+            IsWallSlideFalling = false;
+            UseWallJumpMoveStats = false;
+            IsWallJumping = false;
+            IsWallJumpFastFalling = false;
+            IsWallJumpFalling = false;
+            IsPastWallJumpApexThreshold = false;
 
-            _wallJumpFastFallReleaseSpeed = 0f;
-            _wallJumpTime = 0f;
+            WallJumpFastFallReleaseSpeed = 0f;
+            WallJumpTime = 0f;
         }
 
         public void ResetJumpValues()
         {
-            _isJumping = false;
-            _isFalling = false;
-            _isFastFalling = false;
-            _fastFallTime = 0f;
-            _isPastApexThreshold = false;
+            IsJumping = false;
+            IsFalling = false;
+            IsFastFalling = false;
+            FastFallTime = 0f;
+            IsPastApexThreshold = false;
         }
 
         public void StopWallSlide()
         {
-            if (_isWallSliding)
+            if (IsWallSliding)
             {
-                _numberOfJumpsUsed++;
+                NumberOfJumpsUsed++;
 
-                _isWallSliding = false;
+                IsWallSliding = false;
             }
         }
     }

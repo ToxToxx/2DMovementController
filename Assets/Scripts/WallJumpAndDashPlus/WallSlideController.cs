@@ -12,9 +12,9 @@ namespace PlayerMovementRefactoring
         }
         public void WallSlideCheck()
         {
-            if (_playerMovement._isTouchingWall && !_playerMovement._isGrounded && !_playerMovement._isDashing)
+            if (_playerMovement.IsTouchingWall && !_playerMovement.IsGrounded && !_playerMovement.IsDashing)
             {
-                if (_playerMovement.VerticalVelocity < 0f && !_playerMovement._isWallSliding)
+                if (_playerMovement.VerticalVelocity < 0f && !_playerMovement.IsWallSliding)
                 {
                     _playerMovement.ResetJumpValues();
                     _playerMovement.ResetWallJumpValues();
@@ -25,19 +25,19 @@ namespace PlayerMovementRefactoring
                         _playerMovement.ResetDashes();
                     }
 
-                    _playerMovement._isWallSlideFalling = false;
-                    _playerMovement._isWallSliding = true;
+                    _playerMovement.IsWallSlideFalling = false;
+                    _playerMovement.IsWallSliding = true;
 
                     if (_playerMovement.MovementStats.ResetJumpOnWallSlide)
                     {
-                        _playerMovement._numberOfJumpsUsed = 0;
+                        _playerMovement.NumberOfJumpsUsed = 0;
                     }
                 }
             }
 
-            else if (_playerMovement._isWallSliding && !_playerMovement._isTouchingWall && !_playerMovement._isGrounded && !_playerMovement._isWallSlideFalling)
+            else if (_playerMovement.IsWallSliding && !_playerMovement.IsTouchingWall && !_playerMovement.IsGrounded && !_playerMovement.IsWallSlideFalling)
             {
-                _playerMovement._isWallSlideFalling = true;
+                _playerMovement.IsWallSlideFalling = true;
                 _playerMovement.StopWallSlide();
             }
             else
@@ -49,7 +49,7 @@ namespace PlayerMovementRefactoring
 
         public void WallSlide()
         {
-            if (_playerMovement._isWallSliding)
+            if (_playerMovement.IsWallSliding)
             {
                 _playerMovement.VerticalVelocity = Mathf.Lerp(_playerMovement.VerticalVelocity, -_playerMovement.MovementStats.WallSlideSpeed, _playerMovement.MovementStats.WallSlideDecelerationSpeed * Time.fixedDeltaTime);
 
