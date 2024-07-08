@@ -91,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
         CountTimers();
         JumpChecks();
         LandCheck();
+        WallSlideCheck();
     }
 
     private void FixedUpdate()
@@ -98,6 +99,7 @@ public class PlayerMovement : MonoBehaviour
         CollisionChecks();
         Jump();
         Fall();
+        WallSlide();
 
         if (_isGrounded)
         {
@@ -356,7 +358,51 @@ public class PlayerMovement : MonoBehaviour
 
     #region Wall Slide
 
+    private void WallSlideCheck()
+    {
+        if(_isTouchingWall && !_isGrounded && !_isDashing)
+        {
+            if(VerticalVelocity < 0f && !_isWallSliding)
+            {
+                _isWallSlideFalling = false;
+                _isWallSliding = true;
 
+                if(MovementStats.ResetJumpOnWallSlide)
+                {
+                    _numberOfJumpsUsed = 0;
+                }
+            }
+        }
+
+        else if (_isWallSliding && !_isTouchingWall && !_isGrounded && !_isWallSlideFalling) 
+        {
+            _isWallSlideFalling = true;
+            StopWallSlide();
+        }
+        else
+        {
+            StopWallSlide();
+        }
+    }
+
+    private void StopWallSlide()
+    {
+        if (_isWallSliding)
+        {
+            _numberOfJumpsUsed++;
+
+            _isWallSliding = false;
+        }
+    }
+
+    private void WallSlide()
+    {
+        if(_isWallSliding)
+        {
+            VerticalVelocity = Mathf.Lerp(VerticalVelocity, -MovementStats.WallSlideSpeed, MovementStats.WallSlideDecelerationSpeed * Time.fixedDeltaTime);
+
+        }
+    }
 
     #endregion
 
@@ -394,6 +440,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void IsTouchingWall()
     {
+        float originEndPoint = 0f;
+        if (_isFacingRight)
+        {
+            originEndPoint = _bodyCollider.bounds.max.x;
+        }
+        else originEndPoint = _bodyCollider.bounds.min.x;
+
+        float adjustedHeight = _bodyCollider.bounds.size.y * MovementStats.WallDetectionRayHeightMultiplier;
+
+        Vector2 boxCastOrigin = new Vector2(originEndPoint, _bodyCollider.bounds.center.y);
+        Vector2 boxCastSize = new Vector2(MovementStats.WallDetectionRayLength, adjustedHeight);
+
+        _wallHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, transform.right, MovementStats.WallDetectionRayLength, MovementStats.GroundLayer);
+        if(_wallHit.collider != null)
+        {
+            _lastWallHit = _wallHit;
+            _isTouchingWall = true;
+        }
+        else _isTouchingWall= false;
+
 
     }
     private void CollisionChecks()
