@@ -92,6 +92,7 @@ public class PlayerMovement : MonoBehaviour
         JumpChecks();
         LandCheck();
         WallSlideCheck();
+        WallJumpCheck();
     }
 
     private void FixedUpdate()
@@ -100,6 +101,7 @@ public class PlayerMovement : MonoBehaviour
         Jump();
         Fall();
         WallSlide();
+        WallJump();
 
         if (_isGrounded)
         {
@@ -144,23 +146,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move(float acceleration, float deceleration, Vector2 moveInput)
     {
-        if (Mathf.Abs(moveInput.x) >= MovementStats.MoveTreshold)
+        if (!_isDashing)
         {
-            TurnCheck(moveInput);
-
-            float targetVelocity = 0f;
-            if (InputManager.RunIsHeld)
+            if (Mathf.Abs(moveInput.x) >= MovementStats.MoveTreshold)
             {
-                targetVelocity = moveInput.x * MovementStats.MaxRunSpeed;
-            }
-            else
-            { targetVelocity = moveInput.x * MovementStats.MaxWalkSpeed; }
+                TurnCheck(moveInput);
 
-            HorizontalVelocity = Mathf.Lerp(HorizontalVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
-        }
-        else if (Mathf.Abs(moveInput.x) <= MovementStats.MoveTreshold)
-        {
-            HorizontalVelocity = Mathf.Lerp(HorizontalVelocity, 0f, deceleration * Time.fixedDeltaTime);
+                float targetVelocity = 0f;
+                if (InputManager.RunIsHeld)
+                {
+                    targetVelocity = moveInput.x * MovementStats.MaxRunSpeed;
+                }
+                else
+                { targetVelocity = moveInput.x * MovementStats.MaxWalkSpeed; }
+
+                HorizontalVelocity = Mathf.Lerp(HorizontalVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+            }
+            else if (Mathf.Abs(moveInput.x) <= MovementStats.MoveTreshold)
+            {
+                HorizontalVelocity = Mathf.Lerp(HorizontalVelocity, 0f, deceleration * Time.fixedDeltaTime);
+            }
         }
     }
 
@@ -204,6 +209,14 @@ public class PlayerMovement : MonoBehaviour
             ResetDashes();
             _numberOfJumpsUsed = 0;
             VerticalVelocity = Physics2D.gravity.y;
+
+            if(_isDashFastFalling && _isGrounded)
+            {
+                ResetDashValues();
+                return;
+            }
+
+            ResetDashValues();
         }
     }
 
@@ -236,6 +249,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (InputManager.JumpWasPressed)
         {
+            if(_isWallSlideFalling && _wallJumpPostBufferTimer >= 0f)
+            {
+                return;
+            }
+
+            else if (_isWallSliding || (_isTouchingWall && _isGrounded)) { return; }
+
             _jumpBufferTimer = MovementStats.JumpBufferTime;
             _jumpReleasedDuringBuffer = false;
         }
@@ -277,14 +297,19 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Double jump logic
-        else if (_jumpBufferTimer > 0f && _isJumping && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed)
+        else if (_jumpBufferTimer > 0f && (_isJumping || _isWallJumping || _isWallSlideFalling || _isAirDashing || _isDashFastFalling) && !_isTouchingWall && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed)
         {
             _isFastFalling = false;
             InitiateJump(1);
+
+            if (_isDashFastFalling)
+            {
+                _isDashFastFalling = false;
+            }
         }
 
         //air jump after coyote time lapsed logic
-        else if (_jumpBufferTimer > 0f && _isFalling && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed - 1)//fixed bugs of uneccesary double jump in air
+        else if (_jumpBufferTimer > 0f && _isFalling && !_isWallSlideFalling && _numberOfJumpsUsed < MovementStats.NumberOfJumpsAllowed - 1)//fixed bugs of uneccesary double jump in air
         {
             InitiateJump(2); //because we are falling and it's air jump
             _isFastFalling = false;
@@ -298,6 +323,8 @@ public class PlayerMovement : MonoBehaviour
         {
             _isJumping = true;
         }
+
+        ResetWallJumpValues();
 
         _jumpBufferTimer = 0f;
         _numberOfJumpsUsed += numberOfJumpsUsed;
@@ -444,6 +471,31 @@ public class PlayerMovement : MonoBehaviour
 
     #region Wall Jump
 
+    private void WallJumpCheck()
+    {
+        if(ShouldApplyPostWallJumpBuffer())
+        {
+            _wallJumpPostBufferTimer = MovementStats.WallJumpPostBufferTime;
+        }
+
+        //wall jump fast falling
+    }
+
+    private void WallJump()
+    {
+
+    }
+
+    private bool ShouldApplyPostWallJumpBuffer()
+    {
+        if(!_isGrounded && (_isTouchingWall || _isWallSliding))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
     private void ResetWallJumpValues()
     {
         _isWallSlideFalling = false;
@@ -546,12 +598,17 @@ public class PlayerMovement : MonoBehaviour
     {
         _jumpBufferTimer -= Time.deltaTime;
 
+        
         if (!_isGrounded)
         {
             _coyoteTimer -= Time.deltaTime;
         }
         else _coyoteTimer = MovementStats.JumpCoyoteTime;
 
+        if(!ShouldApplyPostWallJumpBuffer())
+        {
+            _wallJumpPostBufferTimer -= Time.deltaTime;
+        }
     }
 
     #endregion
