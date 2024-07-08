@@ -105,9 +105,21 @@ public class PlayerMovement : MonoBehaviour
         {
             Move(MovementStats.GroundAcceleration, MovementStats.GroundDeceleration, InputManager.Movement);
 
-        } else
+        }
+        else
         {
-            Move(MovementStats.AirAcceleration, MovementStats.AirDeceleration, InputManager.Movement);
+            //wall jumping
+            if (_useWallJumpMoveStats)
+            {
+                Move(MovementStats.WallJumpMoveAceleration, MovementStats.WallJumpMoveDeceleration, InputManager.Movement);
+            }
+
+            //airborne
+            else
+            {
+                Move(MovementStats.AirAcceleration, MovementStats.AirDeceleration, InputManager.Movement);
+            }
+
         }
 
         ApplyVelocity();
@@ -116,7 +128,14 @@ public class PlayerMovement : MonoBehaviour
     private void ApplyVelocity()
     {
         //clamp fall speed
-        VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
+        if (!_isDashing)
+        {
+            VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
+        }
+        else
+        {
+            VerticalVelocity = Mathf.Clamp(VerticalVelocity, -50f, 50f);
+        }
 
         _playerRigidbody.velocity = new Vector2(HorizontalVelocity, VerticalVelocity);
     }
@@ -177,13 +196,12 @@ public class PlayerMovement : MonoBehaviour
     private void LandCheck()
     {
         //landed logic
-        if ((_isJumping || _isFalling) && _isGrounded && VerticalVelocity <= 0f)
+        if ((_isJumping || _isFalling || _isWallJumping || _isWallJUmpFalling || _isWallSlideFalling || _isWallSliding || _isDashFastFalling) && _isGrounded && VerticalVelocity <= 0f)
         {
-            _isJumping = false;
-            _isFalling = false;
-            _isFastFalling = false;
-            _isPastApexThreshold = false;
-            _fastFallTime = 0f;
+            ResetJumpValues();
+            StopWallSlide();
+            ResetWallJumpValues();
+            ResetDashes();
             _numberOfJumpsUsed = 0;
             VerticalVelocity = Physics2D.gravity.y;
         }
@@ -192,7 +210,7 @@ public class PlayerMovement : MonoBehaviour
     private void Fall()
     {
         //normal gravity while falling
-        if (!_isGrounded && !_isJumping)
+        if (!_isGrounded && !_isJumping && !_isWallSliding && !_isWallJumping && !_isDashing && !_isDashFastFalling)
         {
             if (!_isFalling)
             {
@@ -373,6 +391,15 @@ public class PlayerMovement : MonoBehaviour
         {
             if(VerticalVelocity < 0f && !_isWallSliding)
             {
+                ResetJumpValues();
+                ResetWallJumpValues();
+                ResetDashValues();
+
+                if (MovementStats.ResetDashOnWallSlide)
+                {
+                    ResetDashes();
+                }
+
                 _isWallSlideFalling = false;
                 _isWallSliding = true;
 
@@ -434,6 +461,17 @@ public class PlayerMovement : MonoBehaviour
 
 
     #region Dash
+
+    private void ResetDashValues()
+    {
+        _isDashFastFalling = false;
+        _dashOnGroundTimer = -0.01f;
+    }
+    
+    private void ResetDashes()
+    {
+        _numberOfDashesUsed = 0;
+    }
 
     #endregion
 
