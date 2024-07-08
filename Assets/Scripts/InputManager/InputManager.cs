@@ -39,5 +39,7 @@ public class InputManager : MonoBehaviour
         JumpWasReleased = _jumpAction.WasReleasedThisFrame();
 
         RunIsHeld = _runAction.IsPressed();
+
+        DashWasPressed = _dashAction.WasPressedThisFrame();
     }
 }
