@@ -72,6 +72,20 @@ public class PlayerMovementStats : ScriptableObject
 
     [Header("Dash Cancel Time")]
     [Range(0.01f, 5f)] public float DashGravityOnReleaseMultiplier = 1f;
+    [Range(0.02f, 0.3f)] public float DashTimeForUpwardsCancel = 0.027f;
+
+    public readonly Vector2[] DashDirections = new Vector2[]
+    {
+        new Vector2 (0, 0), //Nothing
+        new Vector2 (1, 0), //Right
+        new Vector2 (1, 1).normalized, //Top-Right
+        new Vector2 (0, 1), //Up
+        new Vector2 (-1, 1).normalized, //Top-Left
+        new Vector2 (-1, 0), //Left
+        new Vector2 (-1, -1).normalized, //Bottom-Left
+        new Vector2 (0, -1), //Down
+        new Vector2 (1, -1).normalized, //Bottom-Right
+    };
 
     public float Gravity { get; private set; }
     public float InitialJumpVelocity { get; private set; }
