@@ -5,7 +5,7 @@ namespace PlayerMovementRefactoring
 {
     public class WallJumpController
     {
-        private PlayerMovement _playerMovement;
+        private readonly PlayerMovement _playerMovement;
 
         public WallJumpController(PlayerMovement player)
         {

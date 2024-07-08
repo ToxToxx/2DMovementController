@@ -5,7 +5,7 @@ namespace PlayerMovementRefactoring
     public class TimerController 
     {
         private readonly PlayerMovement _playerMovement;
-        private WallJumpController _wallJumpController;
+        private readonly WallJumpController _wallJumpController;
 
         public TimerController(PlayerMovement player, WallJumpController wallJumpController)
         {

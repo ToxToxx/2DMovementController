@@ -4,7 +4,7 @@ namespace PlayerMovementRefactoring
 {
     public class WallSlideController
     {
-        private PlayerMovement _playerMovement;
+        private readonly PlayerMovement _playerMovement;
 
         public WallSlideController(PlayerMovement player)
         {
