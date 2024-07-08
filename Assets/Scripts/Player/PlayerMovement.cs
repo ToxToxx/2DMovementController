@@ -694,12 +694,69 @@ public class PlayerMovement : MonoBehaviour
 
             //if diagonal direction
             bool isDiagonal = (Mathf.Abs(MovementStats.DashDirections[i].x) == 1 && Mathf.Abs(MovementStats.DashDirections[i].y) == 1);
-
+            if(isDiagonal)
+            {
+                distance -= MovementStats.DashDiagonallyBias;
+            }
+            else if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestDirection = MovementStats.DashDirections[i];
+            }
         }
+
+        //handle direction with no input
+        if(closestDirection == Vector2.zero)
+        {
+            if (_isFacingRight)
+            {
+                closestDirection = Vector2.right;
+            }
+            else closestDirection = Vector2.left;
+        }
+
+        _dashDirection = closestDirection;
+        _numberOfDashesUsed++;
+        _isDashing = true;
+        _dashTimer = 0f;
+        _dashOnGroundTimer = MovementStats.TimeBtwDashesOnGround;
+
+        ResetJumpValues();
+        ResetWallJumpValues();
+        StopWallSlide();
     }
     private void Dash()
     {
+        if(_isDashing)
+        {
+            //stop the dash after the timer
+            _dashTimer += Time.fixedDeltaTime;
+            if(_dashTimer >= MovementStats.DashTime)
+            {
+                if (_isGrounded)
+                {
+                    ResetDashes();
+                }
 
+                _isAirDashing = false;
+                _isDashing = false;
+
+                if(!_isJumping && !_isWallJumping)
+                {
+                    _dashFastFallTime = 0f;
+                    _dashFastFallReleaseSpeed = VerticalVelocity;
+
+                    if(!_isGrounded)
+                    {
+                        _isDashFastFalling = true;
+                    }
+                }
+
+                return;
+            }
+
+            HorizontalVelocity = MovementStats.DashSpeed * _dashDirection.x;
+        }
     }
     private void ResetDashValues()
     {
