@@ -1422,7 +1422,6 @@ GameObject:
   - component: {fileID: 1023734413}
   - component: {fileID: 1023734412}
   - component: {fileID: 1023734414}
-  - component: {fileID: 1023734415}
   - component: {fileID: 1023734416}
   m_Layer: 0
   m_Name: Player
@@ -1527,21 +1526,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &1023734415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1023734411}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ca6782b8dd2cc84585a41c2961d1931, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MovementStats: {fileID: 11400000, guid: 7f90d67d1099a2c4dbe7fe7f7d19def3, type: 2}
-  _feetCollider: {fileID: 1896766344}
-  _bodyCollider: {fileID: 1500121104}
 --- !u!114 &1023734416
 MonoBehaviour:
   m_ObjectHideFlags: 0
