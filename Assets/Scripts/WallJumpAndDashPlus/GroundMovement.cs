@@ -4,7 +4,7 @@ namespace PlayerMovementRefactoring
 {
     public class GroundMovement
     {
-        private PlayerMovement _playerMovement;
+        private readonly PlayerMovement _playerMovement;
 
         public GroundMovement(PlayerMovement player)
         {
@@ -19,13 +19,9 @@ namespace PlayerMovementRefactoring
                 {
                     _playerMovement.TurnCheck(moveInput);
 
-                    float targetVelocity = 0f;
-                    if (InputManager.RunIsHeld)
-                    {
-                        targetVelocity = moveInput.x * _playerMovement.MovementStats.MaxRunSpeed;
-                    }
-                    else
-                    { targetVelocity = moveInput.x * _playerMovement.MovementStats.MaxWalkSpeed; }
+                    float targetVelocity = InputManager.RunIsHeld
+                        ? moveInput.x * _playerMovement.MovementStats.MaxRunSpeed
+                        : moveInput.x * _playerMovement.MovementStats.MaxWalkSpeed;
 
                     _playerMovement.HorizontalVelocity = Mathf.Lerp(_playerMovement.HorizontalVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
                 }
