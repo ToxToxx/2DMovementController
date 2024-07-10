@@ -89,8 +89,17 @@ namespace PlayerMovementRefactoring
 
         private void Awake()
         {
-            _playerRigidbody = GetComponent<Rigidbody2D>();
+            InitializeComponents();
+            InitializeControllers();
+        }
 
+        private void InitializeComponents()
+        {
+            _playerRigidbody = GetComponent<Rigidbody2D>();
+        }
+
+        private void InitializeControllers()
+        {
             _groundMovement = new GroundMovement(this);
             _jumpHandler = new JumpHandler(this);
             _landFallController = new LandFallController(this);
@@ -99,8 +108,6 @@ namespace PlayerMovementRefactoring
             _dashController = new DashController(this);
             _collisionChecksController = new CollisionChecksController(this);
             _timerController = new TimerController(this, _wallJumpController);
-
-            IsFacingRight = true;
         }
 
         private void Update()
@@ -122,30 +129,23 @@ namespace PlayerMovementRefactoring
             _wallJumpController.WallJump();
             _dashController.Dash();
 
-            if (IsGrounded)
-            {
-                _groundMovement.Move(MovementStats.GroundAcceleration, MovementStats.GroundDeceleration, InputManager.Movement);
-
-            }
-            else
-            {
-                //wall jumping
-                if (UseWallJumpMoveStats)
-                {
-                    _groundMovement.Move(MovementStats.WallJumpMoveAceleration, MovementStats.WallJumpMoveDeceleration, InputManager.Movement);
-                }
-
-                //airborne
-                else
-                {
-                    _groundMovement.Move(MovementStats.AirAcceleration, MovementStats.AirDeceleration, InputManager.Movement);
-                }
-
-            }
-
+            ApplyMovement();
             ApplyVelocity();
         }
 
+        private void ApplyMovement()
+        {
+            if (IsGrounded)
+            {
+                _groundMovement.Move(MovementStats.GroundAcceleration, MovementStats.GroundDeceleration, InputManager.Movement);
+            }
+            else
+            {
+                float acceleration = UseWallJumpMoveStats ? MovementStats.WallJumpMoveAceleration : MovementStats.AirAcceleration;
+                float deceleration = UseWallJumpMoveStats ? MovementStats.WallJumpMoveDeceleration : MovementStats.AirDeceleration;
+                _groundMovement.Move(acceleration, deceleration, InputManager.Movement);
+            }
+        }
 
         public void TurnCheck(Vector2 moveInput)
         {
@@ -161,30 +161,14 @@ namespace PlayerMovementRefactoring
 
         private void Turn(bool turnRight)
         {
-            if (turnRight)
-            {
-                IsFacingRight = true;
-                transform.Rotate(0f, 180f, 0f);
-            }
-            else
-            {
-                IsFacingRight = false;
-                transform.Rotate(0f, -180f, 0f);
-            }
+            IsFacingRight = turnRight;
+            transform.Rotate(0f, turnRight ? 180f : -180f, 0f);
         }
 
         public void ApplyVelocity()
         {
-            //clamp fall speed
-            if (!IsDashing)
-            {
-                VerticalVelocity = Mathf.Clamp(VerticalVelocity, -MovementStats.MaxFallSpeed, 50f); //changed if need to clamp faster
-            }
-            else
-            {
-                VerticalVelocity = Mathf.Clamp(VerticalVelocity, -50f, 50f);
-            }
-
+            float maxFallSpeed = IsDashing ? -50f : -MovementStats.MaxFallSpeed;
+            VerticalVelocity = Mathf.Clamp(VerticalVelocity, maxFallSpeed, 50f);
             _playerRigidbody.velocity = new Vector2(HorizontalVelocity, VerticalVelocity);
         }
 
