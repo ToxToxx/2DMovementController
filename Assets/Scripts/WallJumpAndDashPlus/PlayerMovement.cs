@@ -22,70 +22,70 @@ namespace PlayerMovementRefactoring
 
         [Header ("Variables")]
         // movement variables
-        public float HorizontalVelocity;
+        [HideInInspector] public float HorizontalVelocity;
         public bool IsFacingRight = true;
 
         //collision check variables
-        public RaycastHit2D GroundHit;
-        public RaycastHit2D HeadHit;
+        [HideInInspector] public RaycastHit2D GroundHit;
+        [HideInInspector] public RaycastHit2D HeadHit;
         public bool IsGrounded;
-        public bool BumpedHead;
+        [HideInInspector] public bool BumpedHead;
 
         //wall collision check variables
-        public RaycastHit2D WallHit;
-        public RaycastHit2D LastWallHit;
+        [HideInInspector] public RaycastHit2D WallHit;
+        [HideInInspector] public RaycastHit2D LastWallHit;
         public bool IsTouchingWall;
 
         //jump variables
-        public float VerticalVelocity;
-        public bool IsJumping;
-        public bool IsFastFalling;
-        public bool IsFalling;
-        public float FastFallTime;
-        public float FastFallReleaseSpeed;
-        public int NumberOfJumpsUsed;
+        [HideInInspector] public float VerticalVelocity;
+        [HideInInspector] public bool IsJumping;
+        [HideInInspector] public bool IsFastFalling;
+        [HideInInspector] public bool IsFalling;
+        [HideInInspector] public float FastFallTime;
+        [HideInInspector] public float FastFallReleaseSpeed;
+        [HideInInspector] public int NumberOfJumpsUsed;
 
         //apex variables
-        public float ApexPoint;
-        public float TimePastApexThreshold;
-        public bool IsPastApexThreshold;
+        [HideInInspector] public float ApexPoint;
+        [HideInInspector] public float TimePastApexThreshold;
+        [HideInInspector] public bool IsPastApexThreshold;
 
         //jump buffer vars
-        public float JumpBufferTimer;
-        public bool JumpReleasedDuringBufferTimer;
+        [HideInInspector] public float JumpBufferTimer;
+        [HideInInspector] public bool JumpReleasedDuringBufferTimer;
 
         //coyote time vars
-        public float CoyoteTimer;
+        [HideInInspector] public float CoyoteTimer;
 
         //wall slide
         public bool IsWallSliding;
-        public bool IsWallSlideFalling;
+        [HideInInspector] public bool IsWallSlideFalling;
 
         //wall jump
-        public bool UseWallJumpMoveStats;
+        [HideInInspector] public bool UseWallJumpMoveStats;
         public bool IsWallJumping;
-        public float WallJumpTime;
-        public bool IsWallJumpFastFalling;
-        public bool IsWallJumpFalling;
-        public float WallJUmpFastFallTime;
-        public float WallJumpFastFallReleaseSpeed;
+        [HideInInspector] public float WallJumpTime;
+        [HideInInspector] public bool IsWallJumpFastFalling;
+        [HideInInspector] public bool IsWallJumpFalling;
+        [HideInInspector] public float WallJUmpFastFallTime;
+        [HideInInspector] public float WallJumpFastFallReleaseSpeed;
 
-        public float WallJumpPostBufferTimer;
+        [HideInInspector] public float WallJumpPostBufferTimer;
 
-        public float WallJumpApexPoint;
-        public float TimePastWallJumpApexThreshold;
-        public bool IsPastWallJumpApexThreshold;
+        [HideInInspector] public float WallJumpApexPoint;
+        [HideInInspector] public float TimePastWallJumpApexThreshold;
+        [HideInInspector] public bool IsPastWallJumpApexThreshold;
 
         //dash vars
         public bool IsDashing;
         public bool IsAirDashing;
-        public float DashTimer;
-        public float DashOnGroundTimer;
-        public int NumberOfDashesUsed;
-        public Vector2 DashDirection;
-        public bool IsDashFastFalling;
-        public float DashFastFallTime;
-        public float DashFastFallReleaseSpeed;
+        [HideInInspector] public float DashTimer;
+        [HideInInspector] public float DashOnGroundTimer;
+        [HideInInspector] public int NumberOfDashesUsed;
+        [HideInInspector] public Vector2 DashDirection;
+        [HideInInspector] public bool IsDashFastFalling;
+        [HideInInspector] public float DashFastFallTime;
+        [HideInInspector] public float DashFastFallReleaseSpeed;
 
         private void Awake()
         {
