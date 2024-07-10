@@ -11,18 +11,21 @@ namespace PlayerMovementRefactoring
         {
             _playerMovement = player;
         }
+
+        public void CollisionChecks()
+        {
+            IsGrounded();
+            BumpedHead();
+            IsTouchingWall();
+        }
+
         private void IsGrounded()
         {
             Vector2 boxCastOrigin = new(_playerMovement.FeetCollider.bounds.center.x, _playerMovement.FeetCollider.bounds.min.y);
             Vector2 boxCastSize = new(_playerMovement.FeetCollider.bounds.size.x, _playerMovement.MovementStats.GroundDetectionRayLength);
 
             _playerMovement.GroundHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.down, _playerMovement.MovementStats.GroundDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
-            if (_playerMovement.GroundHit.collider != null)
-            {
-                _playerMovement.IsGrounded = true;
-            }
-            else _playerMovement.IsGrounded = false;
-
+            _playerMovement.IsGrounded = _playerMovement.GroundHit.collider != null;
         }
 
         private void BumpedHead()
@@ -31,24 +34,14 @@ namespace PlayerMovementRefactoring
             Vector2 boxCastSize = new(_playerMovement.FeetCollider.bounds.size.x * _playerMovement.MovementStats.HeadWidth, _playerMovement.MovementStats.HeadDetectionRayLength);
 
             _playerMovement.HeadHit = Physics2D.BoxCast(boxCastOrigin, boxCastSize, 0f, Vector2.up, _playerMovement.MovementStats.HeadDetectionRayLength, _playerMovement.MovementStats.GroundLayer);
-            if (_playerMovement.HeadHit.collider != null)
-            {
-                _playerMovement.BumpedHead = true;
-            }
-            else
-            {
-                _playerMovement.BumpedHead = false;
-            }
+            _playerMovement.BumpedHead = _playerMovement.HeadHit.collider != null;
         }
 
         private void IsTouchingWall()
         {
-            float originEndPoint = 0f;
-            if (_playerMovement.IsFacingRight)
-            {
-                originEndPoint = _playerMovement.BodyCollider.bounds.max.x;
-            }
-            else originEndPoint = _playerMovement.BodyCollider.bounds.min.x;
+            float originEndPoint = _playerMovement.IsFacingRight
+                ? _playerMovement.BodyCollider.bounds.max.x
+                : _playerMovement.BodyCollider.bounds.min.x;
 
             float adjustedHeight = _playerMovement.BodyCollider.bounds.size.y * _playerMovement.MovementStats.WallDetectionRayHeightMultiplier;
 
@@ -61,15 +54,10 @@ namespace PlayerMovementRefactoring
                 _playerMovement.LastWallHit = _playerMovement.WallHit;
                 _playerMovement.IsTouchingWall = true;
             }
-            else _playerMovement.IsTouchingWall = false;
-
-
-        }
-        public void CollisionChecks()
-        {
-            IsGrounded();
-            BumpedHead();
-            IsTouchingWall();
+            else
+            {
+                _playerMovement.IsTouchingWall = false;
+            }
         }
     }
 }
